@@ -12,18 +12,18 @@ use Ruby::Array;
 use Scalar::Util qw(reftype);
 
 sub ra {
-	my $ret = tie my @ret, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Array';
 	if (   @_ == 1
 		&& reftype( $_[0] ) eq 'ARRAY'
 		&& ref( $_[0] ) ne 'Ruby::Array' )
 	{
-		@ret = @{ $_[0] };
+		@new_ary = @{ $_[0] };
 	}
 	else {
-		@ret = @_;
+		@new_ary = @_;
 	}
 
-	return $ret;
+	return $new_ary;
 }
 
 sub rh {

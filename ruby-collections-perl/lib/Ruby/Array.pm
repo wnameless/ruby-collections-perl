@@ -11,33 +11,15 @@ use lib "$FindBin::Bin/../../lib";
 use Ruby::Hash;
 use Ruby::Collections qw(ra rh p p_array);
 
-sub multiply {
-	my ( $self, $sep_or_n ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
-	if ( looks_like_number $sep_or_n ) {
-		die 'ArgumentError: negative argument' if ( $sep_or_n < 0 );
-
-		for ( my $i = 0 ; $i < $sep_or_n ; $i++ ) {
-			push( @new_ary, @{$self} );
-		}
-		return $new_ary;
-	}
-	else {
-		return join( $sep_or_n, @{$self} );
-	}
-}
-
 sub add {
 	my ( $self, $other_ary ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	my $new_ary = tie my @new_ary, 'Ruby::Array';
-	@new_ary = @{$self};
+	@new_ary = @$self;
 	push( @new_ary, @{$other_ary} );
 
-	retuen $new_ary;
+	return $new_ary;
 }
 
 sub minus {
@@ -51,6 +33,24 @@ sub minus {
 	}
 
 	return $new_ary;
+}
+
+sub multiply {
+    my ( $self, $sep_or_n ) = @_;
+    ref($self) eq __PACKAGE__ or die;
+
+    my $new_ary = tie my @new_ary, 'Ruby::Array';
+    if ( looks_like_number $sep_or_n ) {
+        die 'ArgumentError: negative argument' if ( $sep_or_n < 0 );
+
+        for ( my $i = 0 ; $i < $sep_or_n ; $i++ ) {
+            push( @new_ary, @{$self} );
+        }
+        return $new_ary;
+    }
+    else {
+        return join( $sep_or_n, @{$self} );
+    }
 }
 
 sub intersect {
