@@ -11,6 +11,10 @@ use lib "$FindBin::Bin/../../lib";
 use Ruby::Hash;
 use Ruby::Collections qw(ra rh p p_array);
 
+=item add()
+  Append other ARRAY to itself.
+=cut
+
 sub add {
 	my ( $self, $other_ary ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -21,6 +25,10 @@ sub add {
 
 	return $new_ary;
 }
+
+=item minus()
+  Remove all elements which other ARRAY contains from itself.
+=cut
 
 sub minus {
 	my ( $self, $other_ary ) = @_;
@@ -34,6 +42,10 @@ sub minus {
 
 	return $new_ary;
 }
+
+=item multiply()
+  Duplicate self by a number of times or join all elements by a string.
+=cut
 
 sub multiply {
 	my ( $self, $sep_or_n ) = @_;
@@ -52,6 +64,10 @@ sub multiply {
 		return join( $sep_or_n, @{$self} );
 	}
 }
+
+=item intersect()
+  Generate an intersection set between self and other ARRAY.
+=cut
 
 sub intersect {
 	my ( $self, $other ) = @_;
@@ -72,6 +88,11 @@ sub intersect {
 
 	return $new_ary;
 }
+
+=item has_all()
+  Check if all elements are defined.
+  When block given, check if all results returned by block are true.
+=cut
 
 sub has_all {
 	my ( $self, $block ) = @_;

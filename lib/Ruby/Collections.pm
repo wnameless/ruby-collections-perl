@@ -5,11 +5,22 @@ package Ruby::Collections;
 our $VERSION = '0.01';
 use strict;
 use v5.10;
+use Scalar::Util qw(reftype);
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::Hash;
 use Ruby::Array;
-use Scalar::Util qw(reftype);
+
+=item ra()
+  Create a Ruby::Array with optional arguments or any array ref.
+  If array ref is also a Ruby::Array, it will be nested in instead of wrapped up.
+  
+  Examples:
+  ra                  -> []
+  ra( 1, 2, 3 )       -> [ 1, 2, 3 ]
+  ra( [ 1, 2, 3 ] )   -> [ 1, 2, 3 ]
+  ra( ra( 1, 2, 3 ) ) -> [ [ 1, 2, 3 ] ]
+=cut
 
 sub ra {
 	my $new_ary = tie my @new_ary, 'Ruby::Array';
@@ -25,6 +36,16 @@ sub ra {
 
 	return $new_ary;
 }
+
+=item rh()
+  Create a Ruby::Hash with optional arguments or any hash ref.
+  
+  Examples:
+  rh                 -> {}
+  rh( { 'a' => 1 } ) -> { 'a' => 1 }
+  rh( 'a' => 1 )     -> { 'a' => 1 }
+  rh( 'a', 1 )       -> { 'a' => 1 }
+=cut
 
 sub rh {
 	my $new_hash = tie my %new_hash, 'Ruby::Hash';
@@ -54,6 +75,12 @@ sub rh {
 	return $new_hash;
 }
 
+=item p()
+  Print the data structure of any object.
+  If the object is simply a scalar, it will be printed out directly.
+  Undefined object will be printed as 'undef' instead of ''.
+=cut
+
 sub p {
 	for my $item (@_) {
 		if ( reftype($item) eq 'ARRAY' ) {
@@ -67,6 +94,11 @@ sub p {
 		}
 	}
 }
+
+=item p_array()
+  Retuen the stringfied data structure of any ARRAY.
+  Undefined object will be printed as 'undef' instead of ''.
+=cut
 
 sub p_array {
 	my $ary     = shift @_;
@@ -86,6 +118,11 @@ sub p_array {
 
 	return '[' . join( ', ', @str_ary ) . ']';
 }
+
+=item p_hash()
+  Print the stringfied data structure of any HASH.
+  Undefined object will be printed as 'undef' instead of ''.
+=cut
 
 sub p_hash {
 	my $hash        = shift @_;
@@ -120,11 +157,6 @@ sub p_hash {
 	}
 
 	return '{' . join( ', ', @str_ary ) . '}';
-}
-
-if ( __FILE__ eq $0 ) {
-	my $ra = ra( 7, 0.111, 2, 9, 4, 5, 8, 12 );
-	p [ 1, 2, 3 ];
 }
 
 1;
