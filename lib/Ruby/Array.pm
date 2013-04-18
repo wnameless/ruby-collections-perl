@@ -110,6 +110,11 @@ sub has_all {
 	return 1;
 }
 
+=item has_any()
+  Check if any element is defined.
+  When block given, check if any result returned by block are true.
+=cut
+
 sub has_any {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;

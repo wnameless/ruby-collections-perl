@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 13;
+use Test::More tests => 17;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -44,5 +44,15 @@ is( ra( 2, 4, 6 )->has_all( sub { $_[0] % 2 == 0 } ),
 	1, 'Testing has_all() with block#1' );
 
 is( ra( 2, 4, 7 )->has_all( sub { $_[0] % 2 == 1 } ),
+	0, 'Testing has_all() with block#2' );
+
+is( ra()->has_any, 0, 'Testing has_any() with empty array' );
+
+is( ra(undef)->has_any, 0, 'Testing has_any() with undef element' );
+
+is( ra( 2, 5, 7 )->has_any( sub { $_[0] % 2 == 0 } ),
+	1, 'Testing has_any() with block#1' );
+
+is( ra( 2, 4, 6 )->has_any( sub { $_[0] % 2 == 1 } ),
 	0, 'Testing has_all() with block#2' );
 
