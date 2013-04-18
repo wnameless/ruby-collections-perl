@@ -131,6 +131,10 @@ sub has_any {
 	return 0;
 }
 
+=item assoc()
+  Find the first sub array which contains target object as the first element.
+=cut
+
 sub assoc {
 	my ( $self, $target ) = @_;
 	ref($self) eq __PACKAGE__ or die;

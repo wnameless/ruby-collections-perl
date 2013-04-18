@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 17;
+use Test::More tests => 18;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -56,3 +56,6 @@ is( ra( 2, 5, 7 )->has_any( sub { $_[0] % 2 == 0 } ),
 is( ra( 2, 4, 6 )->has_any( sub { $_[0] % 2 == 1 } ),
 	0, 'Testing has_all() with block#2' );
 
+is_deeply( ra( 1, 2, ra( 3, 4 ) )->assoc(3), [ 3, 4 ], 'Testing assoc()' );
+
+is( ra( 1, 2, 3, 4 )->assoc(2), undef, 'Testing assoc() with no sub arrays' );
