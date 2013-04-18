@@ -1695,7 +1695,7 @@ sub select {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	return $self->fins_all($block);
+	return $self->find_all($block);
 }
 
 sub selectEx {
