@@ -59,3 +59,7 @@ is( ra( 2, 4, 6 )->has_any( sub { $_[0] % 2 == 1 } ),
 is_deeply( ra( 1, 2, ra( 3, 4 ) )->assoc(3), [ 3, 4 ], 'Testing assoc()' );
 
 is( ra( 1, 2, 3, 4 )->assoc(2), undef, 'Testing assoc() with no sub arrays' );
+
+is( ra( 1, 2, 3, 4 )->at(-2), 3, 'Testing at()' );
+
+is( ra( 1, 2, 3, 4 )->at(4), undef, 'Testing at() with nonexist index' );

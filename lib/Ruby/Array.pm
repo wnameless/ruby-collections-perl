@@ -153,6 +153,11 @@ sub assoc {
 	return undef;
 }
 
+=item at()
+  Return the element of certain position.
+  Return undef if element is not found.
+=cut
+
 sub at {
 	my ( $self, $index ) = @_;
 	ref($self) eq __PACKAGE__ or die;
