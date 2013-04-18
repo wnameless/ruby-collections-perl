@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 9;
+use Test::More tests => 13;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -35,3 +35,14 @@ is_deeply(
 	[ 'a', 2 ],
 	'Testing intersect()'
 );
+
+is( ra()->has_all, 1, 'Testing has_all() with empty array' );
+
+is( ra(undef)->has_all, 0, 'Testing has_all() with undef element' );
+
+is( ra( 2, 4, 6 )->has_all( sub { $_[0] % 2 == 0 } ),
+	1, 'Testing has_all() with block#1' );
+
+is( ra( 2, 4, 7 )->has_all( sub { $_[0] % 2 == 1 } ),
+	0, 'Testing has_all() with block#2' );
+
