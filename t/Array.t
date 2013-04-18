@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 23;
+use Test::More tests => 24;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -69,3 +69,8 @@ is( ra( 1, 2, 3, 4 )->bsearch( sub { $_[0] == 4 } ), 4, 'Testing bsearch()' );
 is( ra( 1, 2, 3, 4 )->bsearch( sub { $_[0] == 5 } ),
 	undef, 'Testing bsearch() with false condition' );
 
+is_deeply(
+	ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { $_[0] % 2 } ),
+	[ [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ],
+	'Testing chunk()'
+);

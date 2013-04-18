@@ -7,7 +7,7 @@ use Scalar::Util qw(reftype);
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::Array;
-use Ruby::Collections qw(ra rh p p_hash);
+use Ruby::Collections qw(ra rh p p_obj p_array);
 
 sub has_all {
 	my ( $self, $block ) = @_;

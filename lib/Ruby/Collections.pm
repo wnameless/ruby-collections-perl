@@ -1,7 +1,7 @@
 package Ruby::Collections;
 @ISA       = qw(Exporter);
-@EXPORT    = qw(ra rh p p_array p_hash);
-@EXPORT_OK = qw(ra rh p p_array p_hash);
+@EXPORT    = qw(ra rh p p_obj p_array p_hash);
+@EXPORT_OK = qw(ra rh p p_obj p_array p_hash);
 our $VERSION = '0.01';
 use strict;
 use v5.10;
@@ -93,6 +93,26 @@ sub p {
 			say defined $item ? "$item" : 'undef';
 		}
 	}
+}
+
+=item p_obj()
+  Same as p(). Instead of printing the result, it simply returns a string.
+=cut
+
+sub p_obj {
+	my $str_ary = ra;
+	for my $item (@_) {
+		if ( reftype($item) eq 'ARRAY' ) {
+			$str_ary->push( p_array($item) );
+		}
+		elsif ( reftype($item) eq 'HASH' ) {
+			$str_ary->push( p_hash($item) );
+		}
+		else {
+			$str_ary->push( ( defined $item ) ? "$item" : 'undef' );
+		}
+	}
+	return $str_ary->join("\n");
 }
 
 =item p_array()

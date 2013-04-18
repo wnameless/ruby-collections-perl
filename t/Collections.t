@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 18;
+use Test::More tests => 20;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -56,6 +56,18 @@ stdout_is(
 	sub { p( [ 1, undef, 'a' ] ) },
 	"[1, undef, a]\n",
 	'Testing p() with undefined element'
+);
+
+is(
+	p_obj( { 'a' => [ 1, { 'b' => 2 }, 3, { 'c' => 4 } ] } ),
+	"{a => [1, {b => 2}, 3, {c => 4}]}",
+	'Testing p_obj() with complex data structure'
+);
+
+is(
+	p_obj( [ 1, undef, 'a' ] ),
+	"[1, undef, a]",
+	'Testing p_obj() with undefined element'
 );
 
 is(

@@ -9,7 +9,7 @@ use Set::CrossProduct;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::Hash;
-use Ruby::Collections qw(ra rh p p_array);
+use Ruby::Collections qw(ra rh p p_obj p_array);
 
 =item add()
   Append other ARRAY to itself.
@@ -183,6 +183,11 @@ sub bsearch {
 
 	return undef;
 }
+
+=item chunk()
+  Seperate all elements which is under certain condition in a row
+  into [ condition, [ elements... ] ] array.
+=cut
 
 sub chunk {
 	my ( $self, $block ) = @_;
@@ -663,12 +668,12 @@ sub eql {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	if ( scalar( @{$self} ) != scalar( @{$other} ) ) {
+    if ( scalar( @{$self} ) != scalar( @{$other} ) ) {
 		return 0;
 	}
 
 	for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
-		if ( @{$self}[$i] != @{$other}[$i] ) {
+		if ( p_obj(@{$self}[$i]) ne p_obj(@{$other}[$i]) ) {
 			return 0;
 		}
 	}
@@ -2053,6 +2058,11 @@ sub union {
 	}
 
 	return $union;
+}
+
+if ( __FILE__ eq $0 ) {
+	p ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { $_[0] % 2 } )
+	  ->eql( [ [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ] );
 }
 
 1;
