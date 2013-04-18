@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 25;
+use Test::More tests => 27;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -76,3 +76,13 @@ is_deeply(
 );
 
 is_deeply( ra( 1, 2, 3 )->clear, [], 'Testing clear()' );
+
+is_deeply(
+	ra( 'a', 'bc', 'def' )->collect( sub { length( $_[0] ) } ),
+	[ 1, 2, 3 ],
+	'Testing collect()'
+);
+
+my $ra = ra( 'a', 'bc', 'def' );
+$ra->collectEx( sub { length( $_[0] ) } );
+is_deeply( $ra, [ 1, 2, 3 ], 'Testing collectEx()' );

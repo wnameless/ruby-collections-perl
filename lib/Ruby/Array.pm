@@ -185,8 +185,8 @@ sub bsearch {
 }
 
 =item chunk()
-  Seperate all elements which is under certain condition in a row
-  into [ condition, [ elements... ] ] array.
+  Chunk all elements which is under certain condition
+  next to each other into [ condition, [ elements... ] ] array.
 =cut
 
 sub chunk {
@@ -235,6 +235,10 @@ sub clear {
 	return $self;
 }
 
+=item
+  Transform each element and store them into a new Ruby::Array.
+=cut
+
 sub collect {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -246,6 +250,11 @@ sub collect {
 
 	return $new_ary;
 }
+
+
+=item
+  Transform each element and store them in self.
+=cut
 
 sub collectEx {
 	my ( $self, $block ) = @_;
