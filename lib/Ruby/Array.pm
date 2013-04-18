@@ -165,6 +165,12 @@ sub at {
 	return @{$self}[$index];
 }
 
+=item bsearch()
+  Find the element by certain condition.
+  Return undef if element is not found.
+  Note: The real binary search is not implemented yet.
+=cut
+
 sub bsearch {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -174,6 +180,7 @@ sub bsearch {
 			return $item;
 		}
 	}
+
 	return undef;
 }
 

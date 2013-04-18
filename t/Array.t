@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 18;
+use Test::More tests => 23;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -63,3 +63,9 @@ is( ra( 1, 2, 3, 4 )->assoc(2), undef, 'Testing assoc() with no sub arrays' );
 is( ra( 1, 2, 3, 4 )->at(-2), 3, 'Testing at()' );
 
 is( ra( 1, 2, 3, 4 )->at(4), undef, 'Testing at() with nonexist index' );
+
+is( ra( 1, 2, 3, 4 )->bsearch( sub { $_[0] == 4 } ), 4, 'Testing bsearch()' );
+
+is( ra( 1, 2, 3, 4 )->bsearch( sub { $_[0] == 5 } ),
+	undef, 'Testing bsearch() with false condition' );
+
