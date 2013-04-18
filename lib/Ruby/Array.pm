@@ -1,6 +1,6 @@
 package Ruby::Array;
 use Tie::Array;
-our @ISA     = 'Tie::StdArray';
+our @ISA = 'Tie::StdArray';
 use strict;
 use v5.10;
 use Scalar::Util qw(looks_like_number reftype);
@@ -36,21 +36,21 @@ sub minus {
 }
 
 sub multiply {
-    my ( $self, $sep_or_n ) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ( $self, $sep_or_n ) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    my $new_ary = tie my @new_ary, 'Ruby::Array';
-    if ( looks_like_number $sep_or_n ) {
-        die 'ArgumentError: negative argument' if ( $sep_or_n < 0 );
+	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	if ( looks_like_number $sep_or_n ) {
+		die 'ArgumentError: negative argument' if ( $sep_or_n < 0 );
 
-        for ( my $i = 0 ; $i < $sep_or_n ; $i++ ) {
-            push( @new_ary, @{$self} );
-        }
-        return $new_ary;
-    }
-    else {
-        return join( $sep_or_n, @{$self} );
-    }
+		for ( my $i = 0 ; $i < $sep_or_n ; $i++ ) {
+			push( @new_ary, @{$self} );
+		}
+		return $new_ary;
+	}
+	else {
+		return join( $sep_or_n, @{$self} );
+	}
 }
 
 sub intersect {
@@ -60,17 +60,17 @@ sub intersect {
 	my @array = @{$self};
 	my @other = @{$other};
 
-	my $intersection = tie my @intersection, 'Ruby::Array';
-	foreach my $item (@other) {
-		if (   ( not $item ~~ \@intersection )
+	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	foreach my $item ( @{$self} ) {
+		if (   ( not $item ~~ \@new_ary )
 			&& $item ~~ \@array
 			&& $item ~~ \@other )
 		{
-			push( @intersection, $item );
+			push( @new_ary, $item );
 		}
 	}
 
-	return $intersection;
+	return $new_ary;
 }
 
 sub has_all {
