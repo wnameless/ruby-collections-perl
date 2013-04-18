@@ -222,6 +222,10 @@ sub chunk {
 
 }
 
+=item clear()
+  Clear all elements.
+=cut
+
 sub clear {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -668,12 +672,12 @@ sub eql {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-    if ( scalar( @{$self} ) != scalar( @{$other} ) ) {
+	if ( scalar( @{$self} ) != scalar( @{$other} ) ) {
 		return 0;
 	}
 
 	for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
-		if ( p_obj(@{$self}[$i]) ne p_obj(@{$other}[$i]) ) {
+		if ( p_obj( @{$self}[$i] ) ne p_obj( @{$other}[$i] ) ) {
 			return 0;
 		}
 	}

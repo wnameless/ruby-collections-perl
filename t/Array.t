@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 24;
+use Test::More tests => 25;
 
 use_ok('Ruby::Array');
 use_ok('Ruby::Hash');
@@ -74,3 +74,5 @@ is_deeply(
 	[ [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ],
 	'Testing chunk()'
 );
+
+is_deeply( ra( 1, 2, 3 )->clear, [], 'Testing clear()' );
