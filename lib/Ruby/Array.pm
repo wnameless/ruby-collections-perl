@@ -8,8 +8,7 @@ use Math::Combinatorics;
 use Set::CrossProduct;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
-use Ruby::Hash;
-use Ruby::Collections qw(ra rh p p_obj p_array);
+use Ruby::Collections;
 
 =item add()
   Append other ARRAY to itself.
