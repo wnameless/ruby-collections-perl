@@ -70,8 +70,8 @@ is( ra( 1, 2, 3, 4 )->bsearch( sub { $_[0] == 5 } ),
 	undef, 'Testing bsearch() with false condition' );
 
 is_deeply(
-	ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { $_[0] % 2 } ),
-	[ [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ],
+	ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { [ $_[0] % 2 ] } ),
+	[ [ [1], [ 1, 3 ] ], [ [0], [ 2, 4 ] ], [ [1], [5] ], [ [0], [6] ] ],
 	'Testing chunk()'
 );
 

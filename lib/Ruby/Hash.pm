@@ -124,8 +124,8 @@ sub count {
 		}
 		elsif ( reftype($ary_or_block) eq 'ARRAY' ) {
 			while ( my ( $key, $val ) = each %$self ) {
-				if (   @{$ary_or_block}[0] eq $key
-					&& @{$ary_or_block}[1] eq $val )
+				if (   p_obj( @{$ary_or_block}[0] ) eq p_obj($key)
+					&& p_obj( @{$ary_or_block}[1] ) eq p_obj($val) )
 				{
 					$count++;
 				}
@@ -408,7 +408,9 @@ sub find_index {
 	if ( reftype($ary_or_block) eq 'ARRAY' ) {
 		my $index = 0;
 		while ( my ( $key, $val ) = each %$self ) {
-			if ( @{$ary_or_block}[0] eq $key && @{$ary_or_block}[0] eq $val ) {
+			if (   p_obj( @{$ary_or_block}[0] ) eq p_obj($key)
+				&& p_obj( @{$ary_or_block}[0] ) eq p_obj($val) )
+			{
 				return $index;
 			}
 			$index++;
@@ -583,7 +585,7 @@ sub key {
 	ref($self) eq __PACKAGE__ or die;
 
 	while ( my ( $key, $val ) = each %$self ) {
-		if ( $value eq $val ) {
+		if ( p_obj($value) eq p_obj($val) ) {
 			return $key;
 		}
 	}

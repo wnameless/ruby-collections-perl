@@ -142,7 +142,7 @@ sub assoc {
 	for my $item ( @{$self} ) {
 		if ( reftype($item) eq 'ARRAY' ) {
 			my @sub_array = @{$item};
-			if ( $sub_array[0] eq $target ) {
+			if ( p_obj( $sub_array[0] ) eq p_obj($target) ) {
 				my $ret = tie my @ret, 'Ruby::Array';
 				@ret = @sub_array;
 				return $ret;
@@ -185,8 +185,8 @@ sub bsearch {
 }
 
 =item chunk()
-  Chunk all elements which is under certain condition
-  next to each other into [ condition, [ elements... ] ] array.
+  Chunk consecutive elements which is under certain condition
+  into [ condition, [ elements... ] ] array.
 =cut
 
 sub chunk {
@@ -198,7 +198,7 @@ sub chunk {
 	my $chunk   = tie my @chunk, 'Ruby::Array';
 	for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
 		my $key = $block->( @{$self}[$i] );
-		if ( $key eq $prev ) {
+		if ( p_obj($key) eq p_obj($prev) ) {
 			$chunk->push( @{$self}[$i] );
 		}
 		else {
@@ -250,7 +250,6 @@ sub collect {
 
 	return $new_ary;
 }
-
 
 =item
   Transform each element and store them in self.
@@ -407,7 +406,7 @@ sub count {
 		else {
 			my $count = 0;
 			for my $item ( @{$self} ) {
-				if ( $obj_or_block eq $item ) {
+				if ( p_obj($obj_or_block) eq p_obj($item) ) {
 					$count++;
 				}
 			}
@@ -814,7 +813,8 @@ sub find_index {
 	}
 	else {
 		for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
-			return $i if ( @{$self}[$i] eq $obj_or_block );
+			return $i
+			  if ( p_obj( @{$self}[$i] ) eq p_obj($obj_or_block) );
 		}
 	}
 
@@ -834,7 +834,7 @@ sub index {
 	}
 	else {
 		for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
-			if ( @{$self}[$i] eq $obj_or_block ) {
+			if ( p_obj( @{$self}[$i] ) eq p_obj($obj_or_block) ) {
 				return $i;
 			}
 		}
@@ -1020,7 +1020,7 @@ sub include {
 	ref($self) eq __PACKAGE__ or die;
 
 	for my $item ( @{$self} ) {
-		if ( $item eq $obj ) {
+		if ( p_obj($item) eq p_obj($obj) ) {
 			return 1;
 		}
 	}
@@ -1391,7 +1391,7 @@ sub rassoc {
 	for my $item ( @{$self} ) {
 		if ( reftype($item) eq 'ARRAY' ) {
 			my @sub_array = @{$item};
-			if ( $sub_array[-1] eq $target ) {
+			if ( p_obj( $sub_array[-1] ) eq p_obj($target) ) {
 				my $ret = tie my @ret, 'Ruby::Array';
 				@ret = @sub_array;
 				return $ret;
@@ -1647,7 +1647,7 @@ sub rindex {
 	}
 	else {
 		for ( my $i = scalar( @{$self} ) - 1 ; $i >= 0 ; $i-- ) {
-			if ( @{$self}[$i] eq $obj_or_block ) {
+			if ( p_obj( @{$self}[$i] ) eq p_obj($obj_or_block) ) {
 				return $i;
 			}
 		}
