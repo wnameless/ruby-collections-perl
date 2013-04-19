@@ -291,12 +291,20 @@ sub collect_concat {
 	return $new_ary;
 }
 
+=item map()
+  Transform each element and store them into a new Ruby::Array.
+=cut
+
 sub map {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->collect($block);
 }
+
+=item mapEx()
+  Transform each element and store them in self.
+=cut
 
 sub mapEx {
 	my ( $self, $block ) = @_;
