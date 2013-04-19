@@ -1,7 +1,6 @@
 package Ruby::Collections;
-@ISA       = qw(Exporter);
-@EXPORT    = qw(ra rh p p_obj p_array p_hash);
-@EXPORT_OK = qw(ra rh p p_obj p_array p_hash);
+use Exporter 'import';
+@EXPORT = qw(ra rh p p_obj p_array p_hash);
 our $VERSION = '0.01';
 use strict;
 use v5.10;
