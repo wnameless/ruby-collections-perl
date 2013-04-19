@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME             => 'ruby-collections-perl',
-    AUTHOR           => q{Wei-Ming Wu <wnameless@gmail.com>},
+    AUTHOR           => q{Wei-Ming Wu <wnameless@gmail.com>, Chia-Hsuan Lee <k75228kimo@gmail.com>},
     VERSION_FROM     => 'lib/Ruby/Collections.pm',
     ABSTRACT_FROM    => 'lib/Ruby/Collections.pm',
     LICENSE          => 'Artistic_2_0',
