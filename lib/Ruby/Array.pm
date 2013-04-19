@@ -303,6 +303,10 @@ sub map {
 	return $self->collect($block);
 }
 
+=item mapEx()
+  Transform each element and store them in self.
+=cut
+
 sub mapEx {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
