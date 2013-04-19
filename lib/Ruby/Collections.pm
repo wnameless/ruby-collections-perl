@@ -8,8 +8,8 @@ use v5.10;
 use Scalar::Util qw(reftype);
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
-use Ruby::Hash;
-use Ruby::Array;
+require Ruby::Hash;
+require Ruby::Array;
 
 =item ra()
   Create a Ruby::Array with optional arguments or any array ref.
