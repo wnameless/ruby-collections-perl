@@ -21,6 +21,10 @@ sub TIEHASH {
   Return 1.
   If block is given, return 1 if all results are true,
   otherwise 0.
+  
+  rh()->has_all                                  # return 1
+  rh(1, 2, 3)->has_all                           # return 1
+  rh(2, 4, 6)->has_all( sub { $_[0] % 2 == 1 } ) # return 0
 =cut
 
 sub has_all {
@@ -35,6 +39,11 @@ sub has_all {
 
 	return 1;
 }
+
+=item has_any()
+  Check if any entry exists.
+  When block given, check if any result returned by block are true.
+=cut
 
 sub has_any {
 	my ( $self, $block ) = @_;

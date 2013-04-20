@@ -46,7 +46,11 @@ sub FETCH {
 sub FIRSTKEY {
 	my ($self) = @_;
 
-	return $keys_table{$self}->first;
+	if ( defined $keys_table{$self} ) {
+		return $keys_table{$self}->first;
+	}
+
+	return undef;
 }
 
 sub NEXTKEY {
