@@ -8,6 +8,14 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::Collections;
 
+sub TIEHASH {
+    my $class = shift;
+
+    my $hash = tie my %hash, 'Ruby::OrderedHash';
+
+    bless \%hash, $class;
+}
+
 sub has_all {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
