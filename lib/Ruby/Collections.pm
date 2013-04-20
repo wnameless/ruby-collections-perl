@@ -48,6 +48,7 @@ sub ra {
 
 sub rh {
 	my $new_hash = tie my %new_hash, 'Ruby::Hash';
+	%new_hash = ();
 
 	if ( @_ == 0 ) {
 		return $new_hash;

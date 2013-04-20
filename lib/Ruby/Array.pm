@@ -218,7 +218,6 @@ sub chunk {
 	}
 
 	return $new_ary;
-
 }
 
 =item clear()

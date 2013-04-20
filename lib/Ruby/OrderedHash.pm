@@ -56,9 +56,12 @@ sub FIRSTKEY {
 sub NEXTKEY {
 	my ( $self, $lastkey ) = @_;
 
-	my $last_index = $keys_table{$self}->index($lastkey);
+	if ( defined $keys_table{$self} ) {
+		my $last_index = $keys_table{$self}->index($lastkey);
+		return $keys_table{$self}->at( $last_index + 1 );
+	}
 
-	return $keys_table{$self}->at( $last_index + 1 );
+	return undef;
 }
 
 sub EXISTS {

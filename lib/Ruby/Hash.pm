@@ -10,11 +10,11 @@ use Ruby::OrderedHash;
 use Ruby::Collections;
 
 sub TIEHASH {
-    my $class = shift;
+	my $class = shift;
 
-    my $hash = tie my %hash, 'Ruby::OrderedHash';
+	my $hash = tie my %hash, 'Ruby::OrderedHash';
 
-    bless \%hash, $class;
+	bless \%hash, $class;
 }
 
 =item has_all()
@@ -78,23 +78,44 @@ sub assoc {
 	}
 }
 
+=item chunk()
+  Chunk consecutive elements which is under certain condition
+  into [ condition, [ [ key, value ]... ] ] array.
+=cut
+
 sub chunk {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $chunk_hash = rh;
-	while ( my ( $key, $val ) = each %$self ) {
-		my $chunk_by = $block->( $key, $val );
-		if ( $chunk_hash->{$chunk_by} ) {
-			$chunk_hash->{$chunk_by}->push( ra( $key, $val ) );
+	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $prev    = undef;
+	my $chunk   = tie my @chunk, 'Ruby::Array';
+	my $i       = 0;
+
+	while ( my ( $k, $v ) = each %$self ) {
+		my $key = $block->( $k, $v );
+		if ( p_obj($key) eq p_obj($prev) ) {
+			$chunk->push( ra( $k, $v ) );
 		}
 		else {
-			$chunk_hash->{$chunk_by} = ra;
-			$chunk_hash->{$chunk_by}->push( ra( $key, $val ) );
+			if ( $i != 0 ) {
+				my $sub_ary = tie my @sub_ary, 'Ruby::Array';
+				$sub_ary->push( $prev, $chunk );
+				$new_ary->push($sub_ary);
+			}
+			$prev = $key;
+			$chunk = tie my @chunk, 'Ruby::Array';
+			$chunk->push( ra( $k, $v ) );
 		}
+		$i++;
+	}
+	if ( $chunk->has_any ) {
+		my $sub_ary = tie my @sub_ary, 'Ruby::Array';
+		$sub_ary->push( $prev, $chunk );
+		$new_ary->push($sub_ary);
 	}
 
-	return $chunk_hash->to_a;
+	return $new_ary;
 }
 
 sub clear {
