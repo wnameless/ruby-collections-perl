@@ -118,6 +118,10 @@ sub chunk {
 	return $new_ary;
 }
 
+=item claer()
+  Clear all keys and values.
+=cut
+
 sub clear {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;

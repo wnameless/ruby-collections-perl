@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 7;
+use Test::More tests => 8;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -36,3 +36,6 @@ is_deeply(
 	'Testing chunk()'
 );
 
+my $rh = rh( 1 => 2, 3 => 4 );
+$rh->clear;
+is_deeply( $rh, {}, 'Testing clear()' );
