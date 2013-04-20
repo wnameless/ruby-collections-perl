@@ -1,8 +1,8 @@
 package Ruby::OrderedHash;
 use Tie::Hash;
 our @ISA = 'Tie::StdHash';
-use Carp;
 use strict;
+use v5.10;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::Collections;
@@ -81,7 +81,9 @@ sub CLEAR {
 	my ($self) = @_;
 
 	%$self = ();
-	$keys_table{$self}->clear;
+	if ( defined $keys_table{$self} ) {
+		$keys_table{$self}->clear;
+	}
 
 	return $self;
 }
