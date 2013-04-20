@@ -76,9 +76,8 @@ sub DELETE {
 		$self->{$key} = undef;
 		return $ret;
 	}
-	else {
-		return undef;
-	}
+
+	return undef;
 }
 
 sub CLEAR {
