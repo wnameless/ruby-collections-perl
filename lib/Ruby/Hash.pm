@@ -58,6 +58,14 @@ sub has_any {
 	return $self->size > 0 ? 1 : 0;
 }
 
+=item assoc()
+  Find the key and return the key-value pair in a Ruby::Array.
+  Return undef if key is not found.
+  
+  rh( 'a' => 123, 'b' => 456 )->assoc('b') # return [ 'b', '456' ]
+  rh( 'a' => 123, 'b' => 456 )->assoc('c') # return undef
+=cut
+
 sub assoc {
 	my ( $self, $obj ) = @_;
 	ref($self) eq __PACKAGE__ or die;
