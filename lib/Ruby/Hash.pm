@@ -6,6 +6,7 @@ use v5.10;
 use Scalar::Util qw(reftype);
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
+use Ruby::OrderedHash;
 use Ruby::Collections;
 
 sub TIEHASH {
@@ -15,6 +16,12 @@ sub TIEHASH {
 
     bless \%hash, $class;
 }
+
+=item has_all()
+  Return 1.
+  If block is given, return 1 if all results are true,
+  otherwise 0.
+=cut
 
 sub has_all {
 	my ( $self, $block ) = @_;

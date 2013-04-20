@@ -7,7 +7,6 @@ use v5.10;
 use Scalar::Util qw(reftype);
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
-require Ruby::OrderedHash;
 require Ruby::Hash;
 require Ruby::Array;
 
