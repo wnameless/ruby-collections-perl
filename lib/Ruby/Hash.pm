@@ -81,6 +81,12 @@ sub assoc {
 =item chunk()
   Chunk consecutive elements which is under certain condition
   into [ condition, [ [ key, value ]... ] ] array.
+  
+  rh( 1 => 1, 2 => 2, 3 => 3, 5 => 5, 4 => 4 )->chunk( sub { $_[0] % 2 } )
+  #return  [ [ 1, [ [ 1, 1 ] ] ],
+             [ 0, [ [ 2, 2 ] ] ],
+             [ 1, [ [ 3, 3 ], [ 5, 5 ] ] ],
+             [ 0, [ [ 4, 4 ] ] ] ]
 =cut
 
 sub chunk {
