@@ -374,7 +374,7 @@ sub detect {
   Remove the first n key-value pair and store rest of elements
   in a new Ruby::Array.
   
-  rh( 1 => 2, 3 => 4, 5 => 6)->drop(1) #return [ [ 3, 4 ], [ 5, 6 ] ]
+  rh( 1 => 2, 3 => 4, 5 => 6)->drop(1) # return [ [ 3, 4 ], [ 5, 6 ] ]
 =cut
 
 sub drop {
@@ -394,6 +394,17 @@ sub drop {
 
 	return $new_ary;
 }
+
+=item drop()
+  Remove the first n key-value pair until the result returned by
+  the block is true and store rest of elements in a new Ruby::Array.
+  
+  rh( 0 => 2, 1 => 3, 2 => 4, 5 => 7)->drop_while( sub {
+  	  my ( $key, $val ) = @_;
+  	  $key % 2 == 1;
+  } )
+  # return [ [ 1, 3 ], [ 2, 4 ], [ 5, 7 ] ]
+=cut
 
 sub drop_while {
 	my ( $self, $block ) = @_;

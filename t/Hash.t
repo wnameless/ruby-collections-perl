@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 23;
+use Test::More tests => 24;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -128,3 +128,14 @@ is_deeply(
 
 dies_ok { rh( 1 => 'a', undef => 0, 'b' => 2 )->drop(-2) }
 'Test drop() with negative aize';
+
+is_deeply(
+	rh( 0 => 2, 1 => 3, 2 => 4, 5 => 7 )->drop_while(
+		sub {
+			my ( $key, $val ) = @_;
+			$key % 2 == 1;
+		}
+	),
+	[ [ 1, 3 ], [ 2, 4 ], [ 5, 7 ] ],
+	'Testing drop_while()'
+);
