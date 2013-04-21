@@ -161,6 +161,30 @@ sub collect {
 	return $new_ary;
 }
 
+=item collect_concat()
+  Transform each key-value pair and store them into a new Ruby::Array.
+  
+  rh( 1 => 2, 3 => 4 )->collect(
+      sub {
+          my ( $key, $val ) = @_;
+          $key * $val;
+      }
+  )
+  # return [ 2, 12 ]
+=cut
+
+=item collect_concat()
+  Call collect(), then call flatten(1).
+  
+  rh( 1 => 2, 3 => 4 )->collect_concat(
+      sub {
+          my ( $key, $val ) = @_;
+          [ $key * $val ];
+      }
+  )
+  # return [ 2, 12 ]
+=cut
+
 sub collect_concat {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -170,6 +194,16 @@ sub collect_concat {
 
 	return $new_ary;
 }
+
+=item delete()
+  Delete the kry-value pair by key, return the value after deletion.
+  If block is given, passing the value after deletion
+  and return the result of block.
+  
+  rh( 'a' => 1 )->delete('a')                     # return 1
+  rh( 'a' => 1 )->delete('b')                     # return undef
+  rh( 'a' => 1 )->delete( 'a', sub{ $_[0] * 3 } ) # return 3
+=cut
 
 sub delete {
 	my ( $self, $key, $block ) = @_;

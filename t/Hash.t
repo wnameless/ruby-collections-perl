@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 9;
+use Test::More tests => 13;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -45,3 +45,16 @@ is_deeply(
 	[ 2, 12 ],
 	'Testing collect()'
 );
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->collect_concat( sub { [ [ $_[0] * $_[1] ] ] } ),
+	[ [2], [12] ],
+	'Testing collect_concat()'
+);
+
+is( rh( 'a' => 1 )->delete('a'), 1, 'Testing delete()' );
+
+is( rh( 'a' => 1 )->delete('b'), undef, 'Testing delete() with nonexist key' );
+
+is( rh( 'a' => 1 )->delete( 'a', sub { $_[0] * 3 } ),
+	3, 'Testing delete() with block' );
