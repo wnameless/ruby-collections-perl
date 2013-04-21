@@ -370,6 +370,13 @@ sub detect {
 	return undef;
 }
 
+=item drop()
+  Remove the first n key-value pair and store rest of elements
+  in a new Ruby::Array.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6)->drop(1) #return [ [ 3, 4 ], [ 5, 6 ] ]
+=cut
+
 sub drop {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -493,18 +500,18 @@ sub each_with_object {
 	return $object;
 }
 
+sub is_empty {
+    my ($self) = @_;
+    ref($self) eq __PACKAGE__ or die;
+
+    return scalar( keys %$self ) == 0 ? 1 : 0;
+}
+
 sub entris {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->to_a;
-}
-
-sub is_empty {
-	my ($self) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return scalar( keys %$self ) == 0 ? 1 : 0;
 }
 
 sub eql {

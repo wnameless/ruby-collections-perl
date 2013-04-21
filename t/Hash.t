@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 21;
+use Test::More tests => 23;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -119,3 +119,12 @@ is(
 
 dies_ok { rh( 'a' => 1, 'b' => 2 )->detect( 1, 2, 3 ) }
 'Testing detect() with wrong number of arguments';
+
+is_deeply(
+	rh( 1 => 'a', undef => 0, 'b' => 2 )->drop(1),
+	[ [ 'undef', 0 ], [ 'b', 2 ] ],
+	'Testing drop()'
+);
+
+dies_ok { rh( 1 => 'a', undef => 0, 'b' => 2 )->drop(-2) }
+'Test drop() with negative aize';
