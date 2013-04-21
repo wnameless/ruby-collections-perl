@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 8;
+use Test::More tests => 9;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -39,3 +39,9 @@ is_deeply(
 my $rh = rh( 1 => 2, 3 => 4 );
 $rh->clear;
 is_deeply( $rh, {}, 'Testing clear()' );
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->collect( sub { $_[0] * $_[1] } ),
+	[ 2, 12 ],
+	'Testing collect()'
+);

@@ -137,6 +137,18 @@ sub clear {
 	return $self;
 }
 
+=item collect()
+  Transform each key-value pair and store them into a new Ruby::Array.
+  
+  rh( 1 => 2, 3 => 4 )->collect(
+      sub {
+          my ( $key, $val ) = @_;
+          $key * $val;
+      }
+  )
+  # return [ 2, 12 ]
+=cut
+
 sub collect {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
