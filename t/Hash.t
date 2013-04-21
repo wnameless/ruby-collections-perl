@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 13;
+use Test::More tests => 15;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -58,3 +58,16 @@ is( rh( 'a' => 1 )->delete('b'), undef, 'Testing delete() with nonexist key' );
 
 is( rh( 'a' => 1 )->delete( 'a', sub { $_[0] * 3 } ),
 	3, 'Testing delete() with block' );
+
+is( rh( 'a' => 'b', 'c' => 'd' )->count, 2, 'Testing count()' );
+
+is(
+	rh( 1 => 3, 2 => 4, 5 => 6 )->count(
+		sub {
+			my ( $key, $val ) = @_;
+			$key % 2 == 0 && $val % 2 == 0;
+		}
+	),
+	1,
+	'Testing count() with block'
+);

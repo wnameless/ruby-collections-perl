@@ -217,6 +217,19 @@ sub delete {
 	}
 }
 
+=item count()
+  Count the number of key-value pairs.
+  If block is given, count the number of results returned by
+  the block which are true.
+  
+  rh( 'a' => 'b', 'c' => 'd' )->count # return 2
+  rh( 1 => 3, 2 => 4, 5 => 6 )->count( sub {
+  	  my ( $key, $val ) = @_;
+  	  $key % 2 == 0 && $val % 2 == 0;
+  } )
+  # return 1
+=cut
+
 sub count {
 	my ( $self, $ary_or_block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
