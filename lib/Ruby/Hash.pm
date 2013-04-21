@@ -479,6 +479,17 @@ sub each_entry {
 	return $self->each->($block);
 }
 
+=item each_pair()
+  Iterate each key-value pair and pass it to the block
+  one by one. Return self.
+  
+  rh( 1 => 2, 3 => 4)->each( sub {
+      my ( $key, $val ) = @_;
+      print "$key, $val, "
+  } )
+  # print 1, 2, 3, 4, 
+=cut
+
 sub each_pair {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
