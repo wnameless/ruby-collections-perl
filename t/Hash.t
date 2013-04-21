@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 24;
+use Test::More tests => 26;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -138,4 +138,28 @@ is_deeply(
 	),
 	[ [ 1, 3 ], [ 2, 4 ], [ 5, 7 ] ],
 	'Testing drop_while()'
+);
+
+stdout_is(
+	sub {
+		rh( 1 => 2, 3 => 4 )->each(
+			sub {
+				my ( $key, $val ) = @_;
+				print "$key, $val, ";
+			}
+		);
+	},
+	'1, 2, 3, 4, ',
+	'Testing each()'
+);
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->each(
+		sub {
+			my ( $key, $val ) = @_;
+			$key + $val;
+		}
+	),
+	{ 1 => 2, 3 => 4 },
+	'Testing each() return value'
 );

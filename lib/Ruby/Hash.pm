@@ -395,7 +395,7 @@ sub drop {
 	return $new_ary;
 }
 
-=item drop()
+=item drop_while()
   Remove the first n key-value pair until the result returned by
   the block is true and store rest of elements in a new Ruby::Array.
   
@@ -421,6 +421,17 @@ sub drop_while {
 
 	return $new_ary;
 }
+
+=item each()
+  Iterate each key-value pair and pass it to the block
+  one by one. Return self.
+  
+  rh( 1 => 2, 3 => 4)->each( sub {
+      my ( $key, $val ) = @_;
+      print "$key, $val, "
+  } )
+  # print 1, 2, 3, 4, 
+=cut
 
 sub each {
 	my ( $self, $block ) = @_;
