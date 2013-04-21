@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 18;
+use Test::More tests => 21;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -84,12 +84,38 @@ dies_ok { rh( 1 => 2, 3 => 4 )->cycle( 1, 2, 3 ) }
 'Testing cycle() with wrong number of arguments';
 
 is_deeply(
-	rh( 1 => 3, 2 => 4 )->delete_if(
+	rh( [ 1, 5 ] => 3, 2 => 4 )->delete_if(
 		sub {
 			my ( $key, $val ) = @_;
-			$key % 2 == 1;
+			$key eq p_obj( [ 1, 5 ] );
 		}
 	),
 	{ 2 => 4 },
 	'Testing delete_if()'
 );
+
+is_deeply(
+	rh( 'a' => 1, 'b' => 2 )->detect(
+		sub {
+			my ( $key, $val ) = @_;
+			$val % 2 == 0;
+		}
+	),
+	[ 'b', 2 ],
+	'Testing detect()'
+);
+
+is(
+	rh( 'a' => 1, 'b' => 2 )->detect(
+		sub { 'Not Found!' },
+		sub {
+			my ( $key, $val ) = @_;
+			$val % 2 == 3;
+		}
+	),
+	'Not Found!',
+	'Testing detect() with default value'
+);
+
+dies_ok { rh( 'a' => 1, 'b' => 2 )->detect( 1, 2, 3 ) }
+'Testing detect() with wrong number of arguments';
