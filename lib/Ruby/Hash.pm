@@ -298,6 +298,17 @@ sub cycle {
 	}
 }
 
+=item delete_if()
+  Pass all key-value pairs into the block and remove them
+  if the results returned by the block are true.
+  
+  rh( 1 => 3, 2 => 4 )->delete_if( sub {
+  	  my ( $key, $val ) = @_;
+  	  $key % 2 == 1;
+  } )
+  # return { 2 => 4 }
+=cut
+
 sub delete_if {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
