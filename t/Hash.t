@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 26;
+use Test::More tests => 28;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -163,3 +163,20 @@ is_deeply(
 	{ 1 => 2, 3 => 4 },
 	'Testing each() return value'
 );
+
+stdout_is(
+	sub {
+		rh( 1 => 2, 3 => 4, 5 => 6 )->each_cons(
+			2,
+			sub {
+				my ($sub_ary) = @_;
+				p $sub_ary->[0]->zip( $sub_ary->[1] );
+			}
+		);
+	},
+	"[[1, 3], [2, 4]]\n[[3, 5], [4, 6]]\n",
+	'Testing each_cons()'
+);
+
+dies_ok { rh( 1 => 2, 3 => 4, 5 => 6 )->each_cons(0) }
+'Testing each_cons() with invalid size';

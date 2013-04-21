@@ -444,6 +444,16 @@ sub each {
 	return $self;
 }
 
+=item each_cons()
+  Iterates each key-value pair([ k, v ]) as array of consecutive <n> elements.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->each_cons( 2, sub{
+  	  my ($sub_ary) = @_;
+  	  p $sub_ary[0]->zip($sub_ary[1]);
+  } )
+  # print "[[1, 3], [2, 4]]\n[[3, 5], [4, 6]]\n"
+=cut
+
 sub each_cons {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -523,10 +533,10 @@ sub each_with_object {
 }
 
 sub is_empty {
-    my ($self) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ($self) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    return scalar( keys %$self ) == 0 ? 1 : 0;
+	return scalar( keys %$self ) == 0 ? 1 : 0;
 }
 
 sub entris {
