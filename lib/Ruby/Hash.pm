@@ -260,6 +260,17 @@ sub count {
 	return $count;
 }
 
+=item cycle()
+  Apply the block with each key-value pair repeatedly.
+  If a limit is given, it only repeats limit of cycles.
+  
+  rh( 1 => 2, 3 => 4 )->cycle( sub { print "$_[0], $_[1], " } )
+  # print 1, 2, 3, 4, 1, 2, 3, 4... forever
+  
+  rh( 1 => 2, 3 => 4 )->cycle( 1, sub { print "$_[0], $_[1], " } )
+  # print 1, 2, 3, 4, 
+=cut
+
 sub cycle {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;

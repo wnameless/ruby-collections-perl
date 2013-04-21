@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 15;
+use Test::More tests => 17;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -71,3 +71,14 @@ is(
 	1,
 	'Testing count() with block'
 );
+
+stdout_is(
+	sub {
+		rh( 1 => 2, 3 => 4 )->cycle( 1, sub { print "$_[0], $_[1], " } );
+	},
+	'1, 2, 3, 4, ',
+	'Testing cycle() with limit'
+);
+
+dies_ok { rh( 1 => 2, 3 => 4 )->cycle( 1, 2, 3 ) }
+'Testing cycle() with wrong number of arguments';
