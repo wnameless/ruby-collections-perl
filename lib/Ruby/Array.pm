@@ -450,7 +450,7 @@ sub delete {
 	ref($self) eq __PACKAGE__ or die;
 
 	my $before_len = scalar( @{$self} );
-	@{$self} = grep { $_ ne $target } @{$self};
+	@{$self} = grep { p_obj($_) ne p_obj($target) } @{$self};
 
 	if ( $before_len == scalar( @{$self} ) ) {
 		if ( defined $block ) {

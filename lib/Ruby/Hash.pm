@@ -461,6 +461,17 @@ sub each_cons {
 	return $self->to_a->each_cons( $n, $block );
 }
 
+=item each_entry()
+  Iterate each key-value pair and pass it to the block
+  one by one. Return self.
+  
+  rh( 1 => 2, 3 => 4)->each( sub {
+      my ( $key, $val ) = @_;
+      print "$key, $val, "
+  } )
+  # print 1, 2, 3, 4, 
+=cut
+
 sub each_entry {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -552,7 +563,7 @@ sub eql {
 
 	if ( reftype($other) eq 'HASH' ) {
 		while ( my ( $key, $val ) = each %$self ) {
-			if ( $val ne $other->{$key} ) {
+			if ( p_obj($val) ne p_obj( $other->{$key} ) ) {
 				return 0;
 			}
 		}
