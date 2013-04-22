@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 42;
+use Test::More tests => 43;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -299,3 +299,26 @@ is( rh->is_empty, 1, 'Testing is_empty()' );
 is( rh( 1 => undef )->is_empty, 0, 'Testing is_empty() with undef value' );
 
 is( rh( undef => 1 )->is_empty, 0, 'Testing is_empty() with undef key' );
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->entries,
+	[ [ 1, 2 ], [ 3, 4 ] ],
+	'Testing entries()'
+);
+
+is( rh( 1 => 2, 3 => 4, 5 => 6 )->eql( { 5 => 6, 3 => 4, 1 => 2 } ),
+	1, 'Testing eql()' );
+
+is(
+	rh( [ 1, 2 ] => 3, [4] => [ 5, 6 ] )
+	  ->eql( rh( [ 1, 2 ] => 3, [4] => [ 5, 6 ] ) ),
+	1,
+	'Testing eql() with Ruby::Hash'
+);
+
+is(
+	rh( [ 1, 2 ] => 3, [4] => [ 5, 6 ] )
+	  ->eql( { [ 1, 2 ] => 3, [4] => [ 5, 6 ] } ),
+	0,
+	'Testing eql() with Perl hash'
+);

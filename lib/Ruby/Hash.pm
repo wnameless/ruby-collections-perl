@@ -624,12 +624,26 @@ sub is_empty {
 	return scalar( keys %$self ) == 0 ? 1 : 0;
 }
 
+=item entries()
+  Put each key-value pair to a Ruby::Array.
+  
+  rh( 1 => 2, 3 => 4)->entries # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
+
 sub entries {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->to_a;
 }
+
+=item eql
+  Check if contents of both hashes are the same. Key order is not matter.
+  
+  rh( 1 => 2, 3 => 4 )->eql( { 3 => 4, 1 => 2 } )       # return 1
+  rh( [1] => 2, 3 => 4 )->eql( { 3 => 4, [1] => 2 } )   # return 0
+  rh( [1] => 2, 3 => 4 )->eql( rh( 3 => 4, [1] => 2 ) ) # return 1
+=cut
 
 sub eql {
 	my ( $self, $other ) = @_;
