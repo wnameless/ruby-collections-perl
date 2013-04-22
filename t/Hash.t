@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 36;
+use Test::More tests => 37;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -260,4 +260,17 @@ stdout_is(
 	},
 	'2, undef, {[2]=>[3]}, ',
 	'Testing each_value()'
+);
+
+stdout_is(
+	sub {
+		rh( 'a' => 'b', 'c' => 'd' )->each_with_index(
+			sub {
+				my ( $key, $val, $index ) = @_;
+				print "$key, $val, $index, ";
+			}
+		);
+	},
+	'a, b, 0, c, d, 1, ',
+	'Testing each_with_index()'
 );

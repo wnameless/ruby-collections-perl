@@ -465,11 +465,11 @@ sub each_cons {
   Iterate each key-value pair and pass it to the block
   one by one. Return self.
   
-  rh( 1 => 2, 3 => 4)->each( sub {
+  rh( 1 => 2, 3 => 4 )->each( sub {
       my ( $key, $val ) = @_;
       print "$key, $val, "
   } )
-  # print 1, 2, 3, 4, 
+  # print "1, 2, 3, 4, "
 =cut
 
 sub each_entry {
@@ -483,11 +483,11 @@ sub each_entry {
   Iterate each key-value pair and pass it to the block
   one by one. Return self.
   
-  rh( 1 => 2, 3 => 4)->each( sub {
+  rh( 1 => 2, 3 => 4 )->each( sub {
       my ( $key, $val ) = @_;
       print "$key, $val, "
   } )
-  # print 1, 2, 3, 4, 
+  # print "1, 2, 3, 4, "
 =cut
 
 sub each_pair {
@@ -515,7 +515,7 @@ sub each_slice {
 =item each_key()
   Put each key in to a Ruby::Array.
   
-  rh( 1 => 2, 'a' => 'b', [ 3, { 'c' => 'd' } ] => 4).each_key( sub {
+  rh( 1 => 2, 'a' => 'b', [ 3, { 'c' => 'd' } ] => 4 ).each_key( sub {
   	  print "$_[0], "
   } )
   # print "1, a, [3, {c=>d}], "
@@ -551,6 +551,17 @@ sub each_value {
 
 	return $self;
 }
+
+=item each_with_index()
+  Iterate each key-value pair and pass it with index to the block
+  one by one. Return self.
+  
+  rh( 'a' => 'b', 'c' => 'd' )->each_with_index( sub {
+      my ( $key, $val, $index ) = @_;
+      print "$key, $val, $index, "
+  } )
+  # print "a, b, 0, c, d, 1, " 
+=cut
 
 sub each_with_index {
 	my ( $self, $block ) = @_;
