@@ -578,6 +578,19 @@ sub each_with_index {
 	return $self;
 }
 
+=item each_with_object()
+  Iterate each key-value pair and pass it with an object to the block
+  one by one. Return the object.
+  
+  my $ra = ra;
+  rh( 1 => 2, 3 => 4 )->each_with_object( $ra, sub {
+      my ( $key, $val, $obj ) = @_;
+      $obj->push( $key, $val );
+  } );
+  p $ra;
+  # print "[1, 2, 3, 4]\n" 
+=cut
+
 sub each_with_object {
 	my ( $self, $object, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -598,7 +611,7 @@ sub is_empty {
 	return scalar( keys %$self ) == 0 ? 1 : 0;
 }
 
-sub entris {
+sub entries {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
