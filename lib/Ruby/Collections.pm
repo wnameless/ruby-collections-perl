@@ -55,7 +55,9 @@ sub rh {
 	}
 	elsif ( @_ == 1 ) {
 		if ( reftype( $_[0] ) eq 'HASH' ) {
-			%new_hash = %{ $_[0] };
+			while ( my ( $key, $val ) = each %{ $_[0] } ) {
+				$new_hash->{$key} = $val;
+			}
 		}
 		else {
 			die 'Input is not a HASH.';
