@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 41;
+use Test::More tests => 42;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -15,6 +15,9 @@ is( rh( 'a' => 1, '2' => 'b' )->has_all( sub { looks_like_number $_[0] } ),
 is( rh( 1 => 2 )->has_any, 1, 'Testing has_any()' );
 
 is( rh->has_any, 0, 'Testing has_any() with empty hash' );
+
+is( rh( 2 => 4, 6 => 8 )->has_any( sub { $_[0] % 2 == 1 } ),
+	0, 'Testing has_any() with block' );
 
 is_deeply(
 	rh( 'a' => 123, 'b' => 456 )->assoc('b'),

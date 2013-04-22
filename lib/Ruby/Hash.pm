@@ -43,6 +43,10 @@ sub has_all {
 =item has_any()
   Check if any entry exists.
   When block given, check if any result returned by block are true.
+  
+  rh( 1 => 2 )->has_any # return 1
+  rh->has_any           # return 0
+  rh ( 2 => 4, 6 => 8 )->has_any( sub { $_[0] % 2 == 1 } ) # return 0
 =cut
 
 sub has_any {
@@ -53,9 +57,11 @@ sub has_any {
 		while ( my ( $key, $val ) = each %$self ) {
 			return 1 if ( $block->( $key, $val ) );
 		}
+		return 0;
 	}
-
-	return $self->size > 0 ? 1 : 0;
+	else {
+		return $self->size > 0 ? 1 : 0;
+	}
 }
 
 =item assoc()
