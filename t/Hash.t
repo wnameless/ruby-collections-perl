@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 38;
+use Test::More tests => 41;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -290,3 +290,9 @@ stdout_is(
 	"[1, 2, 3, 4]\n",
 	'Testing each_with_object()'
 );
+
+is( rh->is_empty, 1, 'Testing is_empty()' );
+
+is( rh( 1 => undef )->is_empty, 0, 'Testing is_empty() with undef value' );
+
+is( rh( undef => 1 )->is_empty, 0, 'Testing is_empty() with undef key' );

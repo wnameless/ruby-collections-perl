@@ -604,6 +604,13 @@ sub each_with_object {
 	return $object;
 }
 
+=item is_empty()
+  Check if Ruby::Hash is empty or not.
+  
+  rh()->is_empty         # return 1
+  rh( 1 => 2 )->is_empty # return 0
+=cut
+
 sub is_empty {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
