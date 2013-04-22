@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 34;
+use Test::More tests => 36;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -237,3 +237,27 @@ is_deeply(
 
 dies_ok { rh( 1 => 2, 3 => 4, 5 => 6 )->each_slice(0) }
 'Testing each_slice() with invalid slice siz';
+
+stdout_is(
+	sub {
+		rh( 1 => 2, 'a' => 'b', [ 3, { 'c' => 'd' } ] => 4 )->each_key(
+			sub {
+				print "$_[0], ";
+			}
+		);
+	},
+	'1, a, [3, {c=>d}], ',
+	'Testing each_key()'
+);
+
+stdout_is(
+	sub {
+		rh( 1 => 2, 'a' => undef, '3' => rh( [2] => [3] ) )->each_value(
+			sub {
+				print p_obj( $_[0] ) . ', ';
+			}
+		);
+	},
+	'2, undef, {[2]=>[3]}, ',
+	'Testing each_value()'
+);

@@ -512,6 +512,15 @@ sub each_slice {
 	return $self->to_a->each_slice( $n, $block );
 }
 
+=item each_key()
+  Put each key in to a Ruby::Array.
+  
+  rh( 1 => 2, 'a' => 'b', [ 3, { 'c' => 'd' } ] => 4).each_key( sub {
+  	  print "$_[0], "
+  } )
+  # print "1, a, [3, {c=>d}], "
+=cut
+
 sub each_key {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -522,6 +531,15 @@ sub each_key {
 
 	return $self;
 }
+
+=item each_value()
+  Put each value in to a Ruby::Array.
+  
+  rh( 1 => 2, 'a' => undef, '3' => rh( [2] => [3] ) )->each_value( sub {
+      print "$_[0], "
+  } )
+  # print "2, undef, {[2]=>[3]}, "
+=cut
 
 sub each_value {
 	my ( $self, $block ) = @_;

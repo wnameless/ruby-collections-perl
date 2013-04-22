@@ -48,7 +48,7 @@ stdout_is(
 	sub {
 		p( { 'a' => [ 1, { 'b' => 2 }, 3, { 'c' => 4 } ] } );
 	},
-	"{a => [1, {b => 2}, 3, {c => 4}]}\n",
+	"{a=>[1, {b=>2}, 3, {c=>4}]}\n",
 	'Testing p() with complex data structure'
 );
 
@@ -60,7 +60,7 @@ stdout_is(
 
 is(
 	p_obj( { 'a' => [ 1, { 'b' => 2 }, 3, { 'c' => 4 } ] } ),
-	"{a => [1, {b => 2}, 3, {c => 4}]}",
+	"{a=>[1, {b=>2}, 3, {c=>4}]}",
 	'Testing p_obj() with complex data structure'
 );
 
@@ -72,12 +72,12 @@ is(
 
 is(
 	p_array( [ 1, undef, 'a', { 2 => 'b' } ] ),
-	'[1, undef, a, {2 => b}]',
+	'[1, undef, a, {2=>b}]',
 	'Testing p_array()'
 );
 
 is(
 	p_hash( { 1 => [ 'a', undef, { 2 => 'b' } ] } ),
-	'{1 => [a, undef, {2 => b}]}',
+	'{1=>[a, undef, {2=>b}]}',
 	'Testing p_hash()'
 );

@@ -173,7 +173,7 @@ sub p_hash {
 	}
 
 	for ( my $i = 0 ; $i < scalar(@key_str_ary) ; $i++ ) {
-		@str_ary[$i] = @key_str_ary[$i] . ' => ' . @val_str_ary[$i];
+		@str_ary[$i] = @key_str_ary[$i] . '=>' . @val_str_ary[$i];
 	}
 
 	return '{' . join( ', ', @str_ary ) . '}';
