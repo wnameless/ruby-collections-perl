@@ -497,6 +497,14 @@ sub each_pair {
 	return $self->each($block);
 }
 
+=item each_slice()
+  Put each key and value into a Ruby::Array and chunk them
+  into other Ruby::Array(s) of size n.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->each_slice(2)
+  # return [ [ [ 1, 2 ], [ 3, 4] ], [ [ 5, 6 ] ] ]
+=cut
+
 sub each_slice {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
