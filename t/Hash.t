@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 60;
+use Test::More tests => 62;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -390,4 +390,16 @@ is_deeply(
 	rh( 1 => 2, 3 => 4 )->flat_map( sub { [ $_[0] * $_[1] * 10 ] } ),
 	[ 20, 120 ],
 	'Testing flat_map()'
+);
+
+is_deeply(
+	rh( 1 => [ 2, 3 ], 4 => 5 )->flatten,
+	[ 1, [ 2, 3 ], 4, 5 ],
+	'Testing flatten()'
+);
+
+is_deeply(
+	rh( 1 => [ 2, 3 ], 4 => 5 )->flatten(2),
+	[ 1, 2, 3, 4, 5 ],
+	'Testing flatten() with n'
 );

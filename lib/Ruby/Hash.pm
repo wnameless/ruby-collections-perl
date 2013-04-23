@@ -818,6 +818,14 @@ sub flat_map {
 	return $self->collect_concat($block);
 }
 
+=item flatten()
+  Push each key & value into a Ruby::Array. If n is specified, call flatten( n - 1 )
+  on the Ruby::Array.
+  
+  rh( 1 => [ 2, 3 ], 4 => 5 )->flatten    # return [ 1, [ 2, 3 ], 4, 5 ]
+  rh( 1 => [ 2, 3 ], 4 => 5 )->flatten(2) # return [ 1, 2, 3, 4, 5 ]
+=cut
+
 sub flatten {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
