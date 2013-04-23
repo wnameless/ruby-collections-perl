@@ -722,6 +722,19 @@ sub find {
 	return $self->detect(@_);
 }
 
+=item find_all()
+  Pass each key-value pair to the block and store all elements
+  which are true returned by the block to a Ruby::Array.
+  
+  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->find_all(
+      sub {
+          my ( $key, $val ) = @_;
+          looks_like_number($key) && looks_like_number($val);
+      }
+  )
+  # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
+
 sub find_all {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;

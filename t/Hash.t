@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 52;
+use Test::More tests => 53;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -354,4 +354,15 @@ is(
 	),
 	'Not Found!',
 	'Testing find() with default value'
+);
+
+is_deeply(
+	rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4' )->find_all(
+		sub {
+			my ( $key, $val ) = @_;
+			looks_like_number($key) && looks_like_number($val);
+		}
+	),
+	[ [ 1, 2 ], [ 3, 4 ] ],
+	'Testing find_all()'
 );
