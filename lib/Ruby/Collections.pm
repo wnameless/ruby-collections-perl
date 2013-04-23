@@ -1,7 +1,7 @@
 package Ruby::Collections;
 use Exporter 'import';
 @EXPORT = qw(ra rh p p_obj p_array p_hash);
-our $VERSION = '0.01';
+our $VERSION = '0.10';
 use strict;
 use v5.10;
 use Scalar::Util qw(reftype);
