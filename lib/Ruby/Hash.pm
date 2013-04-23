@@ -663,6 +663,17 @@ sub eql {
 	return 1;
 }
 
+=item fetch()
+  Retrieve the value by certain key. Throw an exception if key is not found.
+  If default value is given, return the default value when key is not found.
+  If block is given, pass the key into the block and return the result when
+  key is not found.
+  
+  rh( 1 => 2, 3 => 4 )->fetch(1)                          # return 2
+  rh( 1 => 2, 3 => 4 )->fetch( 5, 10 )                    # return 10
+  rh( 1 => 2, 3 => 4 )->fetch( 5, sub { $_[0] * $_[0] } ) # return 25
+=cut
+
 sub fetch {
 	my ( $self, $key, $default_or_block ) = @_;
 	ref($self) eq __PACKAGE__ or die;

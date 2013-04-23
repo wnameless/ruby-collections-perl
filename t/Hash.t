@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 43;
+use Test::More tests => 50;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -322,3 +322,13 @@ is(
 	0,
 	'Testing eql() with Perl hash'
 );
+
+is( rh( 1 => 2, 3 => 4 )->fetch(1), 2, 'Testing fetch()' );
+
+dies_ok { rh( 1 => 2, 3 => 4 )->fetch(5) } 'Testing fetch with nonexist key';
+
+is( rh( 1 => 2, 3 => 4 )->fetch( 5, 10 ),
+	10, 'Testing fetch() with default value' );
+
+is( rh( 1 => 2, 3 => 4 )->fetch( 5, sub { $_[0] * $_[0] } ),
+	25, 'Testing fetch() with block' );
