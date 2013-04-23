@@ -742,6 +742,15 @@ sub find_all {
 	return $self->select($block);
 }
 
+=item find_index()
+  Find the position of pair under certain condition. Condition can be
+  an array which contains the target key & value or can be a block.
+  
+  rh( 1 => 2, 3 => 4 )->find_index( [ 5, 6 ] )           # return undef
+  rh( 1 => 2, 3 => 4 )->find_index( [ 3, 4 ] )           # return 1
+  rh( 1 => 2, 3 => 4 )->find_index( sub { $_[0] == 1 } ) # return 0
+=cut
+
 sub find_index {
 	my ( $self, $ary_or_block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -750,7 +759,7 @@ sub find_index {
 		my $index = 0;
 		while ( my ( $key, $val ) = each %$self ) {
 			if (   p_obj( @{$ary_or_block}[0] ) eq p_obj($key)
-				&& p_obj( @{$ary_or_block}[0] ) eq p_obj($val) )
+				&& p_obj( @{$ary_or_block}[1] ) eq p_obj($val) )
 			{
 				return $index;
 			}
@@ -765,9 +774,6 @@ sub find_index {
 			}
 			$index++;
 		}
-	}
-	else {
-		return undef;
 	}
 
 	return undef;

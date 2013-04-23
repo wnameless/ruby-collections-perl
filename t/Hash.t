@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 53;
+use Test::More tests => 56;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -366,3 +366,12 @@ is_deeply(
 	[ [ 1, 2 ], [ 3, 4 ] ],
 	'Testing find_all()'
 );
+
+is( rh( 1 => 2, 3 => 4 )->find_index( [ 3, 4 ] ), 1, 'Testing find_index()' );
+
+is( rh( 1 => 2, 3 => 4 )->find_index( [ 5, 6 ] ),
+	undef, 'Testing find_index() with nonexist pair' );
+
+is( rh( 1 => 2, 3 => 4 )->find_index( sub { $_[0] == 3 } ),
+	1, 'Testing find_index() with block' );
+
