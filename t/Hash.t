@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 50;
+use Test::More tests => 52;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -332,3 +332,26 @@ is( rh( 1 => 2, 3 => 4 )->fetch( 5, 10 ),
 
 is( rh( 1 => 2, 3 => 4 )->fetch( 5, sub { $_[0] * $_[0] } ),
 	25, 'Testing fetch() with block' );
+
+is_deeply(
+	rh( 'a' => 1, [ 'b', 'c' ] => 2 )->detect(
+		sub {
+			my ( $key, $val ) = @_;
+			$key eq p_obj( [ 'b', 'c' ] );
+		}
+	),
+	[ p_obj( [ 'b', 'c' ] ), 2 ],
+	'Testing find()'
+);
+
+is(
+	rh( 'a' => 1, 'b' => 2 )->detect(
+		sub { 'Not Found!' },
+		sub {
+			my ( $key, $val ) = @_;
+			$val % 2 == 3;
+		}
+	),
+	'Not Found!',
+	'Testing find() with default value'
+);

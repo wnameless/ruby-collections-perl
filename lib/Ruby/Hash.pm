@@ -697,6 +697,24 @@ sub fetch {
 	}
 }
 
+=item find()
+  Find the first key-value pair which result returned by
+  the block is true. If default is given, return the default
+  when such pair can't be found.
+  
+  rh( 'a' => 1, 'b' => 2 )->find( sub {
+      my ( $key, $val ) = @_;
+      $val % 2 == 0;
+  } )
+  # return [ 'b', 2 ]
+  
+  rh( 'a' => 1, 'b' => 2 )->find( sub { 'Not Found!' }, sub {
+      my ( $key, $val ) = @_;
+      $val % 2 == 3;
+  } )
+  # return 'Not Found!'
+=cut
+
 sub find {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
