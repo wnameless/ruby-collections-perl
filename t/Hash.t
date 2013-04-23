@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 56;
+use Test::More tests => 59;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -375,3 +375,13 @@ is( rh( 1 => 2, 3 => 4 )->find_index( [ 5, 6 ] ),
 is( rh( 1 => 2, 3 => 4 )->find_index( sub { $_[0] == 3 } ),
 	1, 'Testing find_index() with block' );
 
+is_deeply( rh( 1 => 2, 3 => 4 )->first, [ 1, 2 ], 'Testing first()' );
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->first(5),
+	[ [ 1, 2 ], [ 3, 4 ] ],
+	'Testing first() with n'
+);
+
+dies_ok { rh( 1 => 2, 3 => 4 )->first(-1) }
+'Testing first() with negative array size';

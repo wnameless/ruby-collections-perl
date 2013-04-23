@@ -779,6 +779,13 @@ sub find_index {
 	return undef;
 }
 
+=item first()
+  Return the first element. If n is specified, return the first n elements.
+  
+  rh( 1 => 2, 3 => 4)->first    # return [ [ 1, 2 ] ]
+  rh( 1 => 2, 3 => 4)->first(5) # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
+
 sub first {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
