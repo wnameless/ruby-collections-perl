@@ -168,18 +168,6 @@ sub collect {
 }
 
 =item collect_concat()
-  Transform each key-value pair and store them into a new Ruby::Array.
-  
-  rh( 1 => 2, 3 => 4 )->collect(
-      sub {
-          my ( $key, $val ) = @_;
-          $key * $val;
-      }
-  )
-  # return [ 2, 12 ]
-=cut
-
-=item collect_concat()
   Call collect(), then call flatten(1).
   
   rh( 1 => 2, 3 => 4 )->collect_concat(
@@ -810,6 +798,18 @@ sub first {
 		return undef;
 	}
 }
+
+=item flat_map()
+  Call map(), then call flatten(1).
+  
+  rh( 1 => 2, 3 => 4 )->flat_map(
+      sub {
+          my ( $key, $val ) = @_;
+          [ $key * $val ];
+      }
+  )
+  # return [ 2, 12 ]
+=cut
 
 sub flat_map {
 	my ( $self, $block ) = @_;
