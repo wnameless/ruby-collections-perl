@@ -8,6 +8,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::OrderedHash;
 use Ruby::Collections;
+use overload ( '==' => \&eql );
 
 sub TIEHASH {
 	my $class = shift;
@@ -1350,7 +1351,7 @@ sub zip {
 }
 
 if ( __FILE__ eq $0 ) {
-	p rh( 1 => 2, 3 => 4 )->eql( { 1 => 2, 3 => 4 } );
+	p rh( 1 => 2, 3 => 4 ) == { 1 => 2, 3 => 4 };
 }
 
 1;
