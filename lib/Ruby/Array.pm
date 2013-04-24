@@ -696,6 +696,10 @@ sub eql {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
+	if ( reftype($other) ne 'ARRAY' ) {
+		return 0;
+	}
+
 	if ( scalar( @{$self} ) != scalar( @{$other} ) ) {
 		return 0;
 	}
