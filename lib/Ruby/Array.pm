@@ -16,7 +16,8 @@ use overload (
 	'&'  => \&intersection,
 	'|'  => \&union,
 	'<<' => \&double_left_arrows,
-	'==' => \&eql
+	'==' => \&eql,
+	'eq' => \&eql
 );
 
 =item add()

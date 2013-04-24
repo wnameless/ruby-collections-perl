@@ -8,7 +8,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::OrderedHash;
 use Ruby::Collections;
-use overload ( '==' => \&eql );
+use overload ( '==' => \&eql, 'eq' => \&eql );
 
 sub TIEHASH {
 	my $class = shift;
