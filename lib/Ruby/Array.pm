@@ -9,6 +9,15 @@ use Set::CrossProduct;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use Ruby::Collections;
+use overload (
+	'+'  => \&add,
+	'-'  => \&minus,
+	'*'  => \&multiply,
+	'&'  => \&intersection,
+	'|'  => \&union,
+	'<<' => \&double_left_arrows,
+	'==' => \&eql
+);
 
 =item add()
   Append other ARRAY to itself.
@@ -64,11 +73,11 @@ sub multiply {
 	}
 }
 
-=item intersect()
+=item intersection()
   Generate an intersection set between self and other ARRAY.
 =cut
 
-sub intersect {
+sub intersection {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
@@ -1390,6 +1399,15 @@ sub push {
 	return $self;
 }
 
+sub double_left_arrows {
+	my $self = shift @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	push( @{$self}, $_[0] );
+
+	return $self;
+}
+
 sub rassoc {
 	my ( $self, $target ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2080,8 +2098,7 @@ sub union {
 }
 
 if ( __FILE__ eq $0 ) {
-	p ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { $_[0] % 2 } )
-	  ->eql( [ [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ] );
+	p ra( 1, 3, 2, 4, 5, 6 ) == [ 1, 3, 2, 4, 5, 6 ];
 }
 
 1;

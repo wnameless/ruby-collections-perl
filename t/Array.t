@@ -28,9 +28,9 @@ is( ra( 1, 2, '3', 'a' )->multiply(', '),
 	'1, 2, 3, a', 'Testing mutiply() with string' );
 
 is_deeply(
-	ra( 'a', 'b', 'c', 1, 2 )->intersect( [ '2', 'a', 'd' ] ),
+	ra( 'a', 'b', 'c', 1, 2 )->intersection( [ '2', 'a', 'd' ] ),
 	[ 'a', 2 ],
-	'Testing intersect()'
+	'Testing intersection()'
 );
 
 is( ra()->has_all, 1, 'Testing has_all() with empty array' );
