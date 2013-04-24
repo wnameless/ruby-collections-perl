@@ -1,19 +1,19 @@
-package Ruby::Hash;
+package Ruby::Collections::Hash;
 use Tie::Hash;
 our @ISA = 'Tie::StdHash';
 use strict;
 use v5.10;
 use Scalar::Util qw(reftype);
 use FindBin;
-use lib "$FindBin::Bin/../../lib";
-use Ruby::OrderedHash;
+use lib "$FindBin::Bin/../../../lib";
+use Ruby::Collections::OrderedHash;
 use Ruby::Collections;
 use overload ( '==' => \&eql, 'eq' => \&eql );
 
 sub TIEHASH {
 	my $class = shift;
 
-	my $hash = tie my %hash, 'Ruby::OrderedHash';
+	my $hash = tie my %hash, 'Ruby::Collections::OrderedHash';
 
 	bless \%hash, $class;
 }
@@ -66,7 +66,7 @@ sub has_any {
 }
 
 =item assoc()
-  Find the key and return the key-value pair in a Ruby::Array.
+  Find the key and return the key-value pair in a Ruby::Collections::Array.
   Return undef if key is not found.
   
   rh( 'a' => 123, 'b' => 456 )->assoc('b') # return [ 'b', '456' ]
@@ -100,9 +100,9 @@ sub chunk {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	my $prev    = undef;
-	my $chunk   = tie my @chunk, 'Ruby::Array';
+	my $chunk   = tie my @chunk, 'Ruby::Collections::Array';
 	my $i       = 0;
 
 	while ( my ( $k, $v ) = each %$self ) {
@@ -112,18 +112,18 @@ sub chunk {
 		}
 		else {
 			if ( $i != 0 ) {
-				my $sub_ary = tie my @sub_ary, 'Ruby::Array';
+				my $sub_ary = tie my @sub_ary, 'Ruby::Collections::Array';
 				$sub_ary->push( $prev, $chunk );
 				$new_ary->push($sub_ary);
 			}
 			$prev = $key;
-			$chunk = tie my @chunk, 'Ruby::Array';
+			$chunk = tie my @chunk, 'Ruby::Collections::Array';
 			$chunk->push( ra( $k, $v ) );
 		}
 		$i++;
 	}
 	if ( $chunk->has_any ) {
-		my $sub_ary = tie my @sub_ary, 'Ruby::Array';
+		my $sub_ary = tie my @sub_ary, 'Ruby::Collections::Array';
 		$sub_ary->push( $prev, $chunk );
 		$new_ary->push($sub_ary);
 	}
@@ -145,7 +145,7 @@ sub clear {
 }
 
 =item collect()
-  Transform each key-value pair and store them into a new Ruby::Array.
+  Transform each key-value pair and store them into a new Ruby::Collections::Array.
   
   rh( 1 => 2, 3 => 4 )->collect(
       sub {
@@ -367,7 +367,7 @@ sub detect {
 
 =item drop()
   Remove the first n key-value pair and store rest of elements
-  in a new Ruby::Array.
+  in a new Ruby::Collections::Array.
   
   rh( 1 => 2, 3 => 4, 5 => 6)->drop(1) # return [ [ 3, 4 ], [ 5, 6 ] ]
 =cut
@@ -392,7 +392,7 @@ sub drop {
 
 =item drop_while()
   Remove the first n key-value pair until the result returned by
-  the block is true and store rest of elements in a new Ruby::Array.
+  the block is true and store rest of elements in a new Ruby::Collections::Array.
   
   rh( 0 => 2, 1 => 3, 2 => 4, 5 => 7)->drop_while( sub {
   	  my ( $key, $val ) = @_;
@@ -493,8 +493,8 @@ sub each_pair {
 }
 
 =item each_slice()
-  Put each key and value into a Ruby::Array and chunk them
-  into other Ruby::Array(s) of size n.
+  Put each key and value into a Ruby::Collections::Array and chunk them
+  into other Ruby::Collections::Array(s) of size n.
   
   rh( 1 => 2, 3 => 4, 5 => 6 )->each_slice(2)
   # return [ [ [ 1, 2 ], [ 3, 4] ], [ [ 5, 6 ] ] ]
@@ -508,7 +508,7 @@ sub each_slice {
 }
 
 =item each_key()
-  Put each key in to a Ruby::Array.
+  Put each key in to a Ruby::Collections::Array.
   
   rh( 1 => 2, 'a' => 'b', [ 3, { 'c' => 'd' } ] => 4 ).each_key( sub {
   	  print "$_[0], "
@@ -528,7 +528,7 @@ sub each_key {
 }
 
 =item each_value()
-  Put each value in to a Ruby::Array.
+  Put each value in to a Ruby::Collections::Array.
   
   rh( 1 => 2, 'a' => undef, '3' => rh( [2] => [3] ) )->each_value( sub {
       print "$_[0], "
@@ -600,7 +600,7 @@ sub each_with_object {
 }
 
 =item is_empty()
-  Check if Ruby::Hash is empty or not.
+  Check if Ruby::Collections::Hash is empty or not.
   
   rh()->is_empty         # return 1
   rh( 1 => 2 )->is_empty # return 0
@@ -614,7 +614,7 @@ sub is_empty {
 }
 
 =item entries()
-  Put each key-value pair to a Ruby::Array.
+  Put each key-value pair to a Ruby::Collections::Array.
   
   rh( 1 => 2, 3 => 4)->entries # return [ [ 1, 2 ], [ 3, 4 ] ]
 =cut
@@ -713,7 +713,7 @@ sub find {
 
 =item find_all()
   Pass each key-value pair to the block and store all elements
-  which are true returned by the block to a Ruby::Array.
+  which are true returned by the block to a Ruby::Collections::Array.
   
   rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->find_all(
       sub {
@@ -820,8 +820,8 @@ sub flat_map {
 }
 
 =item flatten()
-  Push each key & value into a Ruby::Array. If n is specified, call flatten( n - 1 )
-  on the Ruby::Array.
+  Push each key & value into a Ruby::Collections::Array. If n is specified,
+  call flatten( n - 1 ) on the Ruby::Collections::Array.
   
   rh( 1 => [ 2, 3 ], 4 => 5 )->flatten    # return [ 1, [ 2, 3 ], 4, 5 ]
   rh( 1 => [ 2, 3 ], 4 => 5 )->flatten(2) # return [ 1, 2, 3, 4, 5 ]

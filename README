@@ -1,6 +1,6 @@
 ruby-collections-perl
 
-Enhence Perl ARRAY & HASH by adding methods inspired by Ruby collections
+Enhance Perl ARRAY & HASH by adding methods inspired by Ruby collections
 to Tie::StdArray & Tie::StdHash.
 
 

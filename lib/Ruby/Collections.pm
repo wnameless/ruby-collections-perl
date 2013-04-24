@@ -7,12 +7,12 @@ use v5.10;
 use Scalar::Util qw(reftype);
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
-require Ruby::Hash;
-require Ruby::Array;
+require Ruby::Collections::Hash;
+require Ruby::Collections::Array;
 
 =item ra()
-  Create a Ruby::Array with optional arguments or any array ref.
-  If array ref is also a Ruby::Array, it will be nested in instead of wrapped up.
+  Create a Ruby::Collections::Array with optional arguments or any array ref.
+  If array ref is also a Ruby::Collections::Array, it will be nested in instead of wrapped up.
   
   Examples:
   ra                  -> []
@@ -22,10 +22,10 @@ require Ruby::Array;
 =cut
 
 sub ra {
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if (   @_ == 1
 		&& reftype( $_[0] ) eq 'ARRAY'
-		&& ref( $_[0] ) ne 'Ruby::Array' )
+		&& ref( $_[0] ) ne 'Ruby::Collections::Array' )
 	{
 		@new_ary = @{ $_[0] };
 	}
@@ -37,7 +37,7 @@ sub ra {
 }
 
 =item rh()
-  Create a Ruby::Hash with optional arguments or any hash ref.
+  Create a Ruby::Collections::Hash with optional arguments or any hash ref.
   
   Examples:
   rh                 -> {}
@@ -47,7 +47,7 @@ sub ra {
 =cut
 
 sub rh {
-	my $new_hash = tie my %new_hash, 'Ruby::Hash';
+	my $new_hash = tie my %new_hash, 'Ruby::Collections::Hash';
 	%new_hash = ();
 
 	if ( @_ == 0 ) {

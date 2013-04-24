@@ -1,4 +1,4 @@
-package Ruby::Array;
+package Ruby::Collections::Array;
 use Tie::Array;
 our @ISA = 'Tie::StdArray';
 use strict;
@@ -7,7 +7,7 @@ use Scalar::Util qw(looks_like_number reftype);
 use Math::Combinatorics;
 use Set::CrossProduct;
 use FindBin;
-use lib "$FindBin::Bin/../../lib";
+use lib "$FindBin::Bin/../../../lib";
 use Ruby::Collections;
 use overload (
 	'+'  => \&add,
@@ -28,7 +28,7 @@ sub add {
 	my ( $self, $other_ary ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = @$self;
 	push( @new_ary, @{$other_ary} );
 
@@ -43,7 +43,7 @@ sub minus {
 	my ( $self, $other_ary ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = @{$self};
 	for my $item ( @{$other_ary} ) {
 		$new_ary->delete($item);
@@ -60,7 +60,7 @@ sub multiply {
 	my ( $self, $sep_or_n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if ( looks_like_number $sep_or_n ) {
 		die 'ArgumentError: negative argument' if ( $sep_or_n < 0 );
 
@@ -82,7 +82,7 @@ sub intersection {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	foreach my $item ( @{$self} ) {
 		if (   ( not $new_ary->include($item) )
 			&& $self->include($item)
@@ -149,7 +149,7 @@ sub assoc {
 		if ( reftype($item) eq 'ARRAY' ) {
 			my @sub_array = @{$item};
 			if ( p_obj( $sub_array[0] ) eq p_obj($target) ) {
-				my $ret = tie my @ret, 'Ruby::Array';
+				my $ret = tie my @ret, 'Ruby::Collections::Array';
 				@ret = @sub_array;
 				return $ret;
 			}
@@ -199,9 +199,9 @@ sub chunk {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	my $prev    = undef;
-	my $chunk   = tie my @chunk, 'Ruby::Array';
+	my $chunk   = tie my @chunk, 'Ruby::Collections::Array';
 	for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
 		my $key = $block->( @{$self}[$i] );
 		if ( p_obj($key) eq p_obj($prev) ) {
@@ -209,17 +209,17 @@ sub chunk {
 		}
 		else {
 			if ( $i != 0 ) {
-				my $sub_ary = tie my @sub_ary, 'Ruby::Array';
+				my $sub_ary = tie my @sub_ary, 'Ruby::Collections::Array';
 				$sub_ary->push( $prev, $chunk );
 				$new_ary->push($sub_ary);
 			}
 			$prev = $key;
-			$chunk = tie my @chunk, 'Ruby::Array';
+			$chunk = tie my @chunk, 'Ruby::Collections::Array';
 			$chunk->push( @{$self}[$i] );
 		}
 	}
 	if ( $chunk->has_any ) {
-		my $sub_ary = tie my @sub_ary, 'Ruby::Array';
+		my $sub_ary = tie my @sub_ary, 'Ruby::Collections::Array';
 		$sub_ary->push( $prev, $chunk );
 		$new_ary->push($sub_ary);
 	}
@@ -241,14 +241,14 @@ sub clear {
 }
 
 =item
-  Transform each element and store them into a new Ruby::Array.
+  Transform each element and store them into a new Ruby::Collections::Array.
 =cut
 
 sub collect {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		push( @new_ary, $block->($item) );
 	}
@@ -277,7 +277,7 @@ sub collect_concat {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	$self->collect($block)->each(
 		sub {
 			if ( reftype( $_[0] ) eq 'ARRAY' ) {
@@ -298,7 +298,7 @@ sub collect_concat {
 }
 
 =item map()
-  Transform each element and store them into a new Ruby::Array.
+  Transform each element and store them into a new Ruby::Collections::Array.
 =cut
 
 sub map {
@@ -325,7 +325,7 @@ sub combination {
 	my $combinat =
 	  Math::Combinatorics->new( count => $n, data => [ @{$self} ] );
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if ( $n < 0 ) {
 		if ( defined $block ) {
 			return $self;
@@ -336,17 +336,17 @@ sub combination {
 	}
 	if ( $n == 0 ) {
 		if ( defined $block ) {
-			$block->( tie my @empty_ary, 'Ruby::Array' );
+			$block->( tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $self;
 		}
 		else {
-			push( @new_ary, tie my @empty_ary, 'Ruby::Array' );
+			push( @new_ary, tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $new_ary;
 		}
 	}
 
 	while ( my @combo = $combinat->next_combination ) {
-		my $c = tie my @c, 'Ruby::Array';
+		my $c = tie my @c, 'Ruby::Collections::Array';
 		@c = @combo;
 		if ( defined $block ) {
 			$block->($c);
@@ -368,7 +368,7 @@ sub compact {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		if ( defined $item ) {
 			push( @new_ary, $item );
@@ -522,7 +522,7 @@ sub drop {
 		die 'attempt to drop negative size';
 	}
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $i ( 0 .. scalar( @{$self} ) - 1 ) {
 		if ( $i >= $n ) {
 			push( @new_ary, @{$self}[$i] );
@@ -537,7 +537,7 @@ sub drop_while {
 	ref($self) eq __PACKAGE__ or die;
 
 	my $cut_point = undef;
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		if ( $block->($item) || $cut_point ) {
 			$cut_point = 1;
@@ -565,10 +565,10 @@ sub each_cons {
 
 	die 'ArgumentError: invalid size' if ( $n <= 0 );
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
 		if ( $i + $n <= scalar( @{$self} ) ) {
-			my $cons = tie my @cons, 'Ruby::Array';
+			my $cons = tie my @cons, 'Ruby::Collections::Array';
 			for ( my $j = $i ; $j < $i + $n ; $j++ ) {
 				$cons->push( $self->at($j) );
 			}
@@ -620,13 +620,13 @@ sub each_slice {
 	die 'ArgumentError: invalid slice size'
 	  if ( ( not defined $n ) || $n <= 0 );
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	my $blocks =
 	  scalar( @{$self} ) % $n == 0
 	  ? int( scalar( @{$self} ) / $n )
 	  : int( scalar( @{$self} ) / $n ) + 1;
 	for ( my $i = 0 ; $i < $blocks ; $i++ ) {
-		my $cons = tie my @cons, 'Ruby::Array';
+		my $cons = tie my @cons, 'Ruby::Collections::Array';
 		for (
 			my $j = $i * $n ;
 			$j < scalar( @{$self} ) ? $j < $i * $n + $n : undef ;
@@ -813,7 +813,7 @@ sub find_all {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = grep { $block->($_) } @{$self};
 
 	return $new_ary;
@@ -915,7 +915,7 @@ sub first {
 	if ( defined $n ) {
 		die 'ArgumentError: negative array size' if ( $n < 0 );
 
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		for ( my $i ; $i < $n && $i < scalar( @{$self} ) ; $i++ ) {
 			push( @new_ary, @{$self}[$i] );
 		}
@@ -937,7 +937,7 @@ sub flatten {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		if ( defined $n && $n > 0 && reftype($item) eq 'ARRAY' ) {
 			$new_ary->concat( recursive_flatten( $item, $n - 1 ) );
@@ -957,7 +957,7 @@ sub recursive_flatten {
 	caller eq __PACKAGE__ or die;
 	my ( $ary, $n ) = @_;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$ary} ) {
 		if ( defined $n && $n > 0 && reftype($item) eq 'ARRAY' ) {
 			$new_ary->concat( recursive_flatten( $item, $n - 1 ) );
@@ -977,7 +977,7 @@ sub flattenEx {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		if ( defined $n && $n > 0 && reftype($item) eq 'ARRAY' ) {
 			$new_ary->concat( recursive_flatten( $item, $n - 1 ) );
@@ -998,7 +998,7 @@ sub grep {
 	my ( $self, $pattern, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		if ( $item =~ $pattern ) {
 			if ( defined $block ) {
@@ -1024,7 +1024,7 @@ sub group_by {
 			$new_hash->{$key}->push($item);
 		}
 		else {
-			$new_hash->{$key} = tie my @group, 'Ruby::Array';
+			$new_hash->{$key} = tie my @group, 'Ruby::Collections::Array';
 			$new_hash->{$key}->push($item);
 		}
 	}
@@ -1124,7 +1124,7 @@ sub last {
 	ref($self) eq __PACKAGE__ or die;
 
 	if ( defined $n ) {
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		for (
 			my $i = scalar( @{$self} ) - 1 ;
 			$i >= 0 && $i > scalar( @{$self} ) - 1 - $n ;
@@ -1197,14 +1197,14 @@ sub minmax {
 	ref($self) eq __PACKAGE__ or die;
 
 	if ( defined $block ) {
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		my $sorted_ary = $self->sort($block);
 		$new_ary->push( $sorted_ary->first );
 		$new_ary->push( $sorted_ary->last );
 		return $new_ary;
 	}
 	else {
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		my $sorted_ary = $self->sort();
 		$new_ary->push( $sorted_ary->first );
 		$new_ary->push( $sorted_ary->last );
@@ -1216,7 +1216,7 @@ sub minmax_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	my $sorted_ary = $self->sort_by($block);
 	$new_ary->push( $sorted_ary->first );
 	$new_ary->push( $sorted_ary->last );
@@ -1270,9 +1270,9 @@ sub partition {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary   = tie my @new_ary,   'Ruby::Array';
-	my $true_ary  = tie my @true_ary,  'Ruby::Array';
-	my $false_ary = tie my @false_ary, 'Ruby::Array';
+	my $new_ary   = tie my @new_ary,   'Ruby::Collections::Array';
+	my $true_ary  = tie my @true_ary,  'Ruby::Collections::Array';
+	my $false_ary = tie my @false_ary, 'Ruby::Collections::Array';
 
 	for my $item ( @{$self} ) {
 		if ( $block->($item) ) {
@@ -1294,7 +1294,7 @@ sub permutation {
 	my $combinat =
 	  Math::Combinatorics->new( count => $n, data => [ @{$self} ] );
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if ( $n < 0 ) {
 		if ( defined $block ) {
 			return $self;
@@ -1305,11 +1305,11 @@ sub permutation {
 	}
 	if ( $n == 0 ) {
 		if ( defined $block ) {
-			$block->( tie my @empty_ary, 'Ruby::Array' );
+			$block->( tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $self;
 		}
 		else {
-			push( @new_ary, tie my @empty_ary, 'Ruby::Array' );
+			push( @new_ary, tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $new_ary;
 		}
 	}
@@ -1319,7 +1319,7 @@ sub permutation {
 		my $combinat =
 		  Math::Combinatorics->new( count => $n, data => [ @{$combo} ] );
 		while ( my @permu = $combinat->next_permutation ) {
-			my $p = tie my @p, 'Ruby::Array';
+			my $p = tie my @p, 'Ruby::Collections::Array';
 			@p = @permu;
 			if ( defined $block ) {
 				$block->($p);
@@ -1345,7 +1345,7 @@ sub pop {
 	if ( defined $n ) {
 		die 'ArgumentError: negative array size' if ( $n < 0 );
 
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		for ( my $i ; $i < $n && scalar( @{$self} ) != 0 ; $i++ ) {
 			unshift( @new_ary, pop( @{$self} ) );
 		}
@@ -1371,10 +1371,10 @@ sub product {
 		push( @{$array_of_arrays}, \@array );
 	}
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	my $iterator = Set::CrossProduct->new($array_of_arrays);
 	while ( $iterator->next ) {
-		my $tuple = tie my @tuple, 'Ruby::Array';
+		my $tuple = tie my @tuple, 'Ruby::Collections::Array';
 		@tuple = @{ $iterator->get };
 		if ( defined $block ) {
 			$block->($tuple);
@@ -1418,7 +1418,7 @@ sub rassoc {
 		if ( reftype($item) eq 'ARRAY' ) {
 			my @sub_array = @{$item};
 			if ( p_obj( $sub_array[-1] ) eq p_obj($target) ) {
-				my $ret = tie my @ret, 'Ruby::Array';
+				my $ret = tie my @ret, 'Ruby::Collections::Array';
 				@ret = @sub_array;
 				return $ret;
 			}
@@ -1432,7 +1432,7 @@ sub reject {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = grep { !$block->($_) } @{$self};
 
 	return $new_ary;
@@ -1457,7 +1457,7 @@ sub repeated_combination {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if ( $n < 0 ) {
 		if ( defined $block ) {
 			return $self;
@@ -1468,11 +1468,11 @@ sub repeated_combination {
 	}
 	if ( $n == 0 ) {
 		if ( defined $block ) {
-			$block->( tie my @empty_ary, 'Ruby::Array' );
+			$block->( tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $self;
 		}
 		else {
-			push( @new_ary, tie my @empty_ary, 'Ruby::Array' );
+			push( @new_ary, tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $new_ary;
 		}
 	}
@@ -1481,7 +1481,7 @@ sub repeated_combination {
 		$n, 0,
 		scalar( @{$self} ) - 1,
 		sub {
-			my $comb = tie my @comb, 'Ruby::Array';
+			my $comb = tie my @comb, 'Ruby::Collections::Array';
 			for ( my $i = 0 ; $i < scalar( @{ $_[0] } ) ; $i++ ) {
 				push( @comb, @{$self}[ @{ $_[0] }[$i] ] );
 			}
@@ -1544,7 +1544,7 @@ sub repeated_permutation {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if ( $n < 0 ) {
 		if ( defined $block ) {
 			return $self;
@@ -1555,11 +1555,11 @@ sub repeated_permutation {
 	}
 	if ( $n == 0 ) {
 		if ( defined $block ) {
-			$block->( tie my @empty_ary, 'Ruby::Array' );
+			$block->( tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $self;
 		}
 		else {
-			push( @new_ary, tie my @empty_ary, 'Ruby::Array' );
+			push( @new_ary, tie my @empty_ary, 'Ruby::Collections::Array' );
 			return $new_ary;
 		}
 	}
@@ -1568,7 +1568,7 @@ sub repeated_permutation {
 		$n, 0,
 		scalar( @{$self} ) - 1,
 		sub {
-			my $comb = tie my @comb, 'Ruby::Array';
+			my $comb = tie my @comb, 'Ruby::Collections::Array';
 			for ( my $i = 0 ; $i < scalar( @{ $_[0] } ) ; $i++ ) {
 				push( @comb, @{$self}[ @{ $_[0] }[$i] ] );
 			}
@@ -1631,7 +1631,7 @@ sub reverse {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = reverse( @{$self} );
 
 	return $new_ary;
@@ -1641,7 +1641,7 @@ sub reverseEx {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@{$self} = reverse( @{$self} );
 
 	return $self;
@@ -1688,7 +1688,7 @@ sub rotate {
 
 	$count = 1 if ( not defined $count );
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = @{$self};
 	if ( scalar( @{$self} ) > 0 ) {
 		while ( $count != 0 ) {
@@ -1735,8 +1735,8 @@ sub sample {
 	if ( defined $n ) {
 		die 'ArgumentError: negative array size' if ( $n < 0 );
 
-		my $index_ary = tie my @index_ary, 'Ruby::Array';
-		my $new_ary   = tie my @new_ary,   'Ruby::Array';
+		my $index_ary = tie my @index_ary, 'Ruby::Collections::Array';
+		my $new_ary   = tie my @new_ary,   'Ruby::Collections::Array';
 
 		$self->each_index( sub { $index_ary->push( $_[0] ); } );
 		for ( my $i = 0 ; $i < $n && scalar(@index_ary) != 0 ; $i++ ) {
@@ -1785,7 +1785,7 @@ sub shift {
 	if ( defined $n ) {
 		die 'ArgumentError: negative array size' if ( $n < 0 );
 
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		for ( my $i ; $i < $n && scalar( @{$self} ) != 0 ; $i++ ) {
 			push( @new_ary, shift( @{$self} ) );
 		}
@@ -1809,9 +1809,9 @@ sub shuffle {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $index_ary   = tie my @index_ary,   'Ruby::Array';
-	my $shuffle_ary = tie my @shuffle_ary, 'Ruby::Array';
-	my $new_ary     = tie my @new_ary,     'Ruby::Array';
+	my $index_ary   = tie my @index_ary,   'Ruby::Collections::Array';
+	my $shuffle_ary = tie my @shuffle_ary, 'Ruby::Collections::Array';
+	my $new_ary     = tie my @new_ary,     'Ruby::Collections::Array';
 
 	$self->each_index( sub { $index_ary->push( $_[0] ); } );
 	while ( scalar(@index_ary) != 0 ) {
@@ -1829,9 +1829,9 @@ sub shuffleEx {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $index_ary   = tie my @index_ary,   'Ruby::Array';
-	my $shuffle_ary = tie my @shuffle_ary, 'Ruby::Array';
-	my $new_ary     = tie my @new_ary,     'Ruby::Array';
+	my $index_ary   = tie my @index_ary,   'Ruby::Collections::Array';
+	my $shuffle_ary = tie my @shuffle_ary, 'Ruby::Collections::Array';
+	my $new_ary     = tie my @new_ary,     'Ruby::Collections::Array';
 
 	$self->each_index( sub { $index_ary->push( $_[0] ); } );
 	while ( scalar(@index_ary) != 0 ) {
@@ -1861,7 +1861,7 @@ sub slice {
 		if ( $index < -scalar( @{$self} ) || $index >= scalar( @{$self} ) ) {
 			return undef;
 		}
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		@new_ary = splice( @{$self}, $index, $length );
 		return $new_ary;
 	}
@@ -1880,7 +1880,7 @@ sub sliceEx {
 		}
 		$index += scalar( @{$self} ) if ( $index < 0 );
 
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		for ( my $i = $index ; $i < scalar( @{$self} ) && $length > 0 ; ) {
 			$new_ary->push( $self->delete_at($i) );
 			$length--;
@@ -1897,19 +1897,19 @@ sub slice_before {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	my $group = undef;
 	if ( ref( @_[0] ) eq 'CODE' ) {
 		my $block = shift @_;
 
 		for my $item ( @{$self} ) {
 			if ( not defined $group ) {
-				$group = tie my @group, 'Ruby::Array';
+				$group = tie my @group, 'Ruby::Collections::Array';
 				push( @group, $item );
 			}
 			elsif ( $block->($item) ) {
 				push( @new_ary, $group );
-				$group = tie my @group, 'Ruby::Array';
+				$group = tie my @group, 'Ruby::Collections::Array';
 				push( @group, $item );
 			}
 			else {
@@ -1922,12 +1922,12 @@ sub slice_before {
 
 		for my $item ( @{$self} ) {
 			if ( not defined $group ) {
-				$group = tie my @group, 'Ruby::Array';
+				$group = tie my @group, 'Ruby::Collections::Array';
 				push( @group, $item );
 			}
 			elsif ( $item =~ $pattern ) {
 				push( @new_ary, $group );
-				$group = tie my @group, 'Ruby::Array';
+				$group = tie my @group, 'Ruby::Collections::Array';
 				push( @group, $item );
 			}
 			else {
@@ -1946,7 +1946,7 @@ sub sort {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	if ( defined $block ) {
 		@new_ary = sort { $block->( $a, $b ) } @{$self};
 	}
@@ -1975,7 +1975,7 @@ sub sort_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $trans_ary = tie my @trans_ary, 'Ruby::Array';
+	my $trans_ary = tie my @trans_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		push( @trans_ary, [ $block->($item), $item ] );
 	}
@@ -1989,7 +1989,7 @@ sub sort_byEx {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $trans_ary = tie my @trans_ary, 'Ruby::Array';
+	my $trans_ary = tie my @trans_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		push( @trans_ary, [ $block->($item), $item ] );
 	}
@@ -2007,7 +2007,7 @@ sub take {
 	if ( defined $n ) {
 		die 'ArgumentError: negative array size' if ( $n < 0 );
 
-		my $new_ary = tie my @new_ary, 'Ruby::Array';
+		my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 		for ( my $i ; $i < $n && $i < scalar( @{$self} ) ; $i++ ) {
 			push( @new_ary, @{$self}[$i] );
 		}
@@ -2022,7 +2022,7 @@ sub take_while {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
 		if ( $block->($item) ) {
 			push( @new_ary, $item );
@@ -2046,7 +2046,7 @@ sub entries {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	@new_ary = @{$self};
 
 	return @new_ary;
@@ -2058,9 +2058,9 @@ sub zip {
 	my $block = undef;
 	$block = pop @_ if ( ref( $_[-1] ) eq 'CODE' );
 
-	my $new_ary = tie my @new_ary, 'Ruby::Array';
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for ( my $i = 0 ; $i < scalar( @{$self} ) ; $i++ ) {
-		my $zip = tie my @zip, 'Ruby::Array';
+		my $zip = tie my @zip, 'Ruby::Collections::Array';
 		for my $ary (@_) {
 			push( @zip, @{$ary}[$i] );
 		}
@@ -2084,7 +2084,7 @@ sub union {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $union = tie my @union, 'Ruby::Array';
+	my $union = tie my @union, 'Ruby::Collections::Array';
 	foreach my $item ( @{$self} ) {
 		if ( not $union->include($item) ) {
 			push( @union, $item );

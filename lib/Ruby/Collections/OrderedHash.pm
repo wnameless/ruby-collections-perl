@@ -1,10 +1,10 @@
-package Ruby::OrderedHash;
+package Ruby::Collections::OrderedHash;
 use Tie::Hash;
 our @ISA = 'Tie::StdHash';
 use strict;
 use v5.10;
 use FindBin;
-use lib "$FindBin::Bin/../../lib";
+use lib "$FindBin::Bin/../../../lib";
 use Ruby::Collections;
 
 my %keys_table;
