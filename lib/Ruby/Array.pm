@@ -82,16 +82,13 @@ sub intersection {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my @array = @{$self};
-	my @other = @{$other};
-
 	my $new_ary = tie my @new_ary, 'Ruby::Array';
 	foreach my $item ( @{$self} ) {
-		if (   ( not $item ~~ \@new_ary )
-			&& $item ~~ \@array
-			&& $item ~~ \@other )
+		if (   ( not $new_ary->include($item) )
+			&& $self->include($item)
+			&& ra($other)->include($item) )
 		{
-			push( @new_ary, $item );
+			$new_ary->push($item);
 		}
 	}
 
@@ -2089,12 +2086,12 @@ sub union {
 
 	my $union = tie my @union, 'Ruby::Array';
 	foreach my $item ( @{$self} ) {
-		if ( not $item ~~ \@union ) {
+		if ( not $union->include($item) ) {
 			push( @union, $item );
 		}
 	}
 	foreach my $item ( @{$other} ) {
-		if ( not $item ~~ \@union ) {
+		if ( not $union->include($item) ) {
 			push( @union, $item );
 		}
 	}
@@ -2103,7 +2100,7 @@ sub union {
 }
 
 if ( __FILE__ eq $0 ) {
-	p ra( 1, 3, 2, 4, 5, 6 ) == [ 1, 3, 2, 4, 5, 6 ];
+	p ra( 1, 3, 2, 4, 5, [ 1, 2 ] ) & [ 1, 3, 2, 4, 5, [ 1, 2 ] ];
 }
 
 1;

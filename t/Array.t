@@ -28,8 +28,9 @@ is( ra( 1, 2, '3', 'a' )->multiply(', '),
 	'1, 2, 3, a', 'Testing mutiply() with string' );
 
 is_deeply(
-	ra( 'a', 'b', 'c', 1, 2 )->intersection( [ '2', 'a', 'd' ] ),
-	[ 'a', 2 ],
+	ra( 'a', 'b', 'c', 1, [ 2, 3 ] )
+	  ->intersection( [ '2', 'a', 'd', [ 2, 3 ] ] ),
+	[ 'a', [ 2, 3 ] ],
 	'Testing intersection()'
 );
 
@@ -90,6 +91,6 @@ is_deeply(
 	'Testing map()'
 );
 
-my $ra = ra( 'W','H','H' );
+my $ra = ra( 'W', 'H', 'H' );
 $ra->collectEx( sub { $_[0] . 'a' } );
-is_deeply( $ra, ['Wa', 'Ha', 'Ha'], 'Testing mapEx()' );
+is_deeply( $ra, [ 'Wa', 'Ha', 'Ha' ], 'Testing mapEx()' );
