@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 73;
+use Test::More tests => 76;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -474,3 +474,9 @@ is_deeply(
 	{ 1 => 1, 3 => 3 },
 	'Testing keep_if()'
 );
+
+is( rh( 1 => 2, 3 => 2 )->key(2), 1, 'Testing key()' );
+
+is( rh( 1 => 2, 3 => 2 )->key(4), undef, 'Testing key() with nonexist value' );
+
+is_deeply( rh( 1 => 2, 3 => 4, 5 => 6 )->keys, [ 1, 3, 5 ], 'Testing keys()' );

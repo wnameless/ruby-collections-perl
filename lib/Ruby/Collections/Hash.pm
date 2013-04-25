@@ -880,6 +880,13 @@ sub keep_if {
 	return $self;
 }
 
+=item key()
+  Find the key by value.
+  
+  rh( 1 => 2, 3 => 2 )->key(2) # return 1
+  rh( 1 => 2, 3 => 2 )->key(4) # return undef
+=cut
+
 sub key {
 	my ( $self, $value ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -892,6 +899,12 @@ sub key {
 
 	return undef;
 }
+
+=item keys()
+  Put all keys in a Ruby::Collections::Array.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->keys # return [ 1, 3, 5 ]
+=cut
 
 sub keys {
 	my ($self) = @_;
