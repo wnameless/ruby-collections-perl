@@ -1078,6 +1078,7 @@ sub length {
 
 =item map()
   Transform each element and store them into a new Ruby::Collections::Array.
+  Alias: collect()
 =cut
 
 sub map {
@@ -1096,6 +1097,7 @@ sub map {
 
 =item mapEx()
   Transform each element and store them in self.
+  Alias: collectEx()
 =cut
 
 sub mapEx {

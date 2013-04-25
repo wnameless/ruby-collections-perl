@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 68;
+use Test::More tests => 70;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -417,6 +417,33 @@ is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
 
 is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_member(1),
 	1, 'Testing has_member() with nonexist key' );
+
+is_deeply(
+	rh( 1 => 2, 3 => 4, 5 => 6 )->inject(
+		sub {
+			my ( $o, $i ) = @_;
+			@$o[0] += @$i[0];
+			@$o[1] += @$i[1];
+			$o;
+		}
+	),
+	[ 9, 12 ],
+	'Testing inject()'
+);
+
+is_deeply(
+	rh( 1 => 2, 3 => 4, 5 => 6 )->inject(
+		[ 7, 7 ],
+		sub {
+			my ( $o, $i ) = @_;
+			@$o[0] += @$i[0];
+			@$o[1] += @$i[1];
+			$o;
+		}
+	),
+	[ 16, 19 ],
+	'Testing inject() with init value'
+);
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->map( sub { $_[0] + $_[1] } ),

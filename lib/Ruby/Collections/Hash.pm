@@ -799,6 +799,27 @@ sub include {
 
 *has_member = \&include;
 
+=item inject()
+  Passing the result of block by each iteration to next iteration, return the
+  final result in the end.
+  Alias: reduce()
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->inject( sub {
+  	  my ( $o, $i ) = @_;
+  	  @$o[0] += @$i[0];
+  	  @$o[1] += @$i[1];
+  	  $o;
+  })
+  # return [ 9, 12 ]
+  rh( 1 => 2, 3 => 4, 5 => 6 )->inject( [ 7, 7 ], sub {
+      my ( $o, $i ) = @_;
+      @$o[0] += @$i[0];
+      @$o[1] += @$i[1];
+      $o;
+  })
+  # return [ 16, 19 ]
+=cut
+
 sub inject {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
