@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 80;
+use Test::More tests => 81;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -488,7 +488,14 @@ is_deeply(
 is_deeply( rh( 6 => 5, 11 => 3, 2 => 1 )->max, [ 6, 5 ], 'Testing max()' );
 
 is_deeply(
-	rh( 6 => 5, 11 => 3, 2 => 1 )->max( sub { @{$_[0]}[0] <=> @{$_[1]}[0] } ),
+	rh( 6 => 5, 11 => 3, 2 => 1 )
+	  ->max( sub { @{ $_[0] }[0] <=> @{ $_[1] }[0] } ),
 	[ 11, 3 ],
 	'Testing max() with block'
+);
+
+is_deeply(
+	rh( 6 => 5, 11 => 3, 2 => 20 )->max_by( sub { @{$_[0]}[0] + @{$_[0]}[1] } ),
+	[ 2, 20 ],
+	'Testing max_by()'
 );

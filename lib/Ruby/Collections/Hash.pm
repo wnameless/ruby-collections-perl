@@ -971,6 +971,13 @@ sub max {
 	return $self->to_a->max($block);
 }
 
+=item max_by()
+  Transform all elements by the given block and then find the max.
+  Return the element which is the origin of the max.
+  
+  rh( 6 => 5, 11 => 3, 2 => 20 )->max_by( sub { @{$_[0]}[0] + @{$_[0]}[1] } ) # return [ 2, 20 ]
+=cut
+
 sub max_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;

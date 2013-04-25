@@ -1910,7 +1910,16 @@ sub sort {
 		@new_ary = sort { $block->( $a, $b ) } @{$self};
 	}
 	else {
-		@new_ary = sort { p_obj($a) cmp p_obj($b) } @{$self};
+		@new_ary = sort {
+			if (   looks_like_number( p_obj($a) )
+				&& looks_like_number( p_obj($b) ) )
+			{
+				p_obj($a) <=> p_obj($b);
+			}
+			else {
+				p_obj($a) cmp p_obj($b);
+			}
+		} @{$self};
 	}
 
 	return $new_ary;
@@ -1924,7 +1933,16 @@ sub sortEx {
 		@{$self} = sort { $block->( $a, $b ) } @{$self};
 	}
 	else {
-		@{$self} = sort( @{$self} );
+		@{$self} = sort {
+			if (   looks_like_number( p_obj($a) )
+				&& looks_like_number( p_obj($b) ) )
+			{
+				p_obj($a) <=> p_obj($b);
+			}
+			else {
+				p_obj($a) cmp p_obj($b);
+			}
+		} @{$self};
 	}
 
 	return $self;
@@ -1938,7 +1956,16 @@ sub sort_by {
 	for my $item ( @{$self} ) {
 		push( @trans_ary, [ $block->($item), $item ] );
 	}
-	@trans_ary = sort { @{$a}[0] cmp @{$b}[0] } @trans_ary;
+	@trans_ary = sort {
+		if (   looks_like_number( p_obj( @{$a}[0] ) )
+			&& looks_like_number( p_obj( @{$b}[0] ) ) )
+		{
+			p_obj( @{$a}[0] ) <=> p_obj( @{$b}[0] );
+		}
+		else {
+			p_obj( @{$a}[0] ) cmp p_obj( @{$b}[0] );
+		}
+	} @trans_ary;
 	$trans_ary->mapEx( sub { return @{ $_[0] }[1]; } );
 
 	return $trans_ary;
@@ -1952,7 +1979,16 @@ sub sort_byEx {
 	for my $item ( @{$self} ) {
 		push( @trans_ary, [ $block->($item), $item ] );
 	}
-	@trans_ary = sort { @{$a}[0] cmp @{$b}[0] } @trans_ary;
+	@trans_ary = sort {
+		if (   looks_like_number( p_obj( @{$a}[0] ) )
+			&& looks_like_number( p_obj( @{$b}[0] ) ) )
+		{
+			p_obj( @{$a}[0] ) <=> p_obj( @{$b}[0] );
+		}
+		else {
+			p_obj( @{$a}[0] ) cmp p_obj( @{$b}[0] );
+		}
+	} @trans_ary;
 	$trans_ary->mapEx( sub { return @{ $_[0] }[1]; } );
 	@{$self} = @trans_ary;
 
