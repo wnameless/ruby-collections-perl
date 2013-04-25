@@ -1910,7 +1910,7 @@ sub sort {
 		@new_ary = sort { $block->( $a, $b ) } @{$self};
 	}
 	else {
-		@new_ary = sort @{$self};
+		@new_ary = sort { p_obj($a) cmp p_obj($b) } @{$self};
 	}
 
 	return $new_ary;

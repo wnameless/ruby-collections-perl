@@ -957,6 +957,13 @@ sub map {
 
 *collect = \&map;
 
+=item max()
+  Find the max element of a Ruby::Collections::Hash.
+  
+  rh( 6 => 5, 11 => 3, 2 => 1 )->max                                    # return [ 6, 5 ]
+  rh( 6 => 5, 11 => 3, 2 => 1 )->max( sub { @$_[0][0] <=> @$_[1][0] } ) # return [ 11, 3 ]
+=cut
+
 sub max {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
