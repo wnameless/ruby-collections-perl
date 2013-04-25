@@ -1103,6 +1103,15 @@ sub minmax_by {
 	return $self->to_a->minmax_by($block);
 }
 
+=item has_none()
+  If hash is empty, return 1, otherwise 0. If block is given and all results of block
+  are false, return 1, otherwise 0.
+  
+  rh->has_none                                                   # return 1
+  rh( 1 => 2 )->has_none                                         # return 0
+  rh( 'a' => 'b' )->has_none( sub { looks_like_number($_[0]) } ) # return 1
+=cut
+
 sub has_none {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;

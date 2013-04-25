@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 89;
+use Test::More tests => 92;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -552,3 +552,10 @@ is_deeply(
 	[ [ 6, 5 ], [ 2, 20 ] ],
 	'Testing mnimax_by()'
 );
+
+is( rh->has_none, 1, 'Testing has_none()' );
+
+is( rh( 1 => 2 )->has_none, 0, 'Testing has_none() with nonempty hash' );
+
+is( rh( 'a' => 'b' )->has_none( sub { looks_like_number( $_[0] ) } ),
+	1, 'Testing has_none() with block' );
