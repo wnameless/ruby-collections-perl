@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 69;
+use Test::More tests => 68;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -42,18 +42,6 @@ is_deeply(
 my $rh = rh( 1 => 2, 3 => 4 );
 $rh->clear;
 is_deeply( $rh, {}, 'Testing clear()' );
-
-is_deeply(
-	rh( 1 => 2, 3 => 4 )->collect( sub { $_[0] * $_[1] } ),
-	[ 2, 12 ],
-	'Testing collect()'
-);
-
-is_deeply(
-	rh( 1 => 2, 3 => 4 )->collect_concat( sub { [ [ $_[0] * $_[1] ] ] } ),
-	[ [2], [12] ],
-	'Testing collect_concat()'
-);
 
 is( rh( 'a' => 1 )->delete('a'), 1, 'Testing delete()' );
 
@@ -96,32 +84,6 @@ is_deeply(
 	{ 2 => 4 },
 	'Testing delete_if()'
 );
-
-is_deeply(
-	rh( 'a' => 1, 'b' => 2 )->detect(
-		sub {
-			my ( $key, $val ) = @_;
-			$val % 2 == 0;
-		}
-	),
-	[ 'b', 2 ],
-	'Testing detect()'
-);
-
-is(
-	rh( 'a' => 1, 'b' => 2 )->detect(
-		sub { 'Not Found!' },
-		sub {
-			my ( $key, $val ) = @_;
-			$val % 2 == 3;
-		}
-	),
-	'Not Found!',
-	'Testing detect() with default value'
-);
-
-dies_ok { rh( 'a' => 1, 'b' => 2 )->detect( 1, 2, 3 ) }
-'Testing detect() with wrong number of arguments';
 
 is_deeply(
 	rh( 1 => 'a', undef => 0, 'b' => 2 )->drop(1),
@@ -334,18 +296,21 @@ is( rh( 1 => 2, 3 => 4 )->fetch( 5, sub { $_[0] * $_[0] } ),
 	25, 'Testing fetch() with block' );
 
 is_deeply(
-	rh( 'a' => 1, [ 'b', 'c' ] => 2 )->detect(
-		sub {
-			my ( $key, $val ) = @_;
-			$key eq p_obj( [ 'b', 'c' ] );
-		}
-	),
-	[ p_obj( [ 'b', 'c' ] ), 2 ],
-	'Testing find()'
+    rh( 'a' => 1, 'b' => 2 )->find(
+        sub {
+            my ( $key, $val ) = @_;
+            $val % 2 == 0;
+        }
+    ),
+    [ 'b', 2 ],
+    'Testing find()'
 );
 
+dies_ok { rh( 'a' => 1, 'b' => 2 )->detect( 1, 2, 3 ) }
+'Testing detect() with wrong number of arguments';
+
 is(
-	rh( 'a' => 1, 'b' => 2 )->detect(
+	rh( 'a' => 1, 'b' => 2 )->find(
 		sub { 'Not Found!' },
 		sub {
 			my ( $key, $val ) = @_;
@@ -393,6 +358,12 @@ is_deeply(
 );
 
 is_deeply(
+    rh( 1 => 2, 3 => 4 )->collect_concat( sub { [ [ $_[0] * $_[1] ] ] } ),
+    [ [2], [12] ],
+    'Testing collect_concat()'
+);
+
+is_deeply(
 	rh( 1 => [ 2, 3 ], 4 => 5 )->flatten,
 	[ 1, [ 2, 3 ], 4, 5 ],
 	'Testing flatten()'
@@ -431,19 +402,31 @@ is_deeply(
 	'Testing group_by()'
 );
 
-is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
-	1, 'Testing has_key()' );
+is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->include(1),
+    1, 'Testing include()' );
 
 is(
-	rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )
-	  ->has_key( [ 3, { 4 => 5 } ] ),
-	1,
-	'Testing has_key() with array & hash'
+    rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )
+      ->include( [ 3, { 4 => 5 } ] ),
+    1,
+    'Testing include() with array & hash'
 );
 
 is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
-	1, 'Testing has_key() with undef' );
+    1, 'Testing has_key() with undef' );
 
-is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
-	1, 'Testing has_key() with nonexist key' );
+is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_member(1),
+    1, 'Testing has_member() with nonexist key' );
+	
+is_deeply(
+    rh( 1 => 2, 3 => 4 )->map( sub { $_[0] + $_[1] } ),
+    [ 3, 7 ],
+    'Testing map()'
+);
+
+is_deeply(
+    rh( 1 => 2, 3 => 4 )->collect( sub { $_[0] * $_[1] } ),
+    [ 2, 12 ],
+    'Testing collect()'
+);
 

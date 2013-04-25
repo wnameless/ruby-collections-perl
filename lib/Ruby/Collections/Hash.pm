@@ -144,52 +144,6 @@ sub clear {
 	return $self;
 }
 
-=item collect()
-  Transform each key-value pair and store them into a new Ruby::Collections::Array.
-  
-  rh( 1 => 2, 3 => 4 )->collect(
-      sub {
-          my ( $key, $val ) = @_;
-          $key * $val;
-      }
-  )
-  # return [ 2, 12 ]
-=cut
-
-sub collect {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my $new_ary = ra;
-	while ( my ( $key, $val ) = each %$self ) {
-		$new_ary->push( $block->( $key, $val ) );
-	}
-
-	return $new_ary;
-}
-
-=item collect_concat()
-  Call collect(), then call flatten(1).
-  
-  rh( 1 => 2, 3 => 4 )->collect_concat(
-      sub {
-          my ( $key, $val ) = @_;
-          [ $key * $val ];
-      }
-  )
-  # return [ 2, 12 ]
-=cut
-
-sub collect_concat {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my $new_ary = $self->collect($block);
-	$new_ary->flattenEx(1);
-
-	return $new_ary;
-}
-
 =item delete()
   Delete the kry-value pair by key, return the value after deletion.
   If block is given, passing the value after deletion
@@ -317,54 +271,6 @@ sub delete_if {
 	return $self;
 }
 
-=item detect()
-  Find the first key-value pair which result returned by
-  the block is true. If default is given, return the default
-  when such pair can't be found.
-  
-  rh( 'a' => 1, 'b' => 2 )->detect( sub {
-  	  my ( $key, $val ) = @_;
-      $val % 2 == 0;
-  } )
-  # return [ 'b', 2 ]
-  
-  rh( 'a' => 1, 'b' => 2 )->detect( sub { 'Not Found!' }, sub {
-      my ( $key, $val ) = @_;
-      $val % 2 == 3;
-  } )
-  # return 'Not Found!'
-=cut
-
-sub detect {
-	my $self = shift @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	if ( @_ == 1 ) {
-		my ($block) = @_;
-		while ( my ( $key, $val ) = each %$self ) {
-			if ( $block->( $key, $val ) ) {
-				return ra( $key, $val );
-			}
-		}
-	}
-	elsif ( @_ == 2 ) {
-		my ( $default, $block ) = @_;
-		while ( my ( $key, $val ) = each %$self ) {
-			if ( $block->( $key, $val ) ) {
-				return ra( $key, $val );
-			}
-		}
-		return $default->();
-	}
-	else {
-		die 'ArgumentError: wrong number of arguments ('
-		  . scalar(@_)
-		  . ' for 0..1)';
-	}
-
-	return undef;
-}
-
 =item drop()
   Remove the first n key-value pair and store rest of elements
   in a new Ruby::Collections::Array.
@@ -420,6 +326,7 @@ sub drop_while {
 =item each()
   Iterate each key-value pair and pass it to the block
   one by one. Return self.
+  Alias: each_entry(), each_pair()
   
   rh( 1 => 2, 3 => 4)->each( sub {
       my ( $key, $val ) = @_;
@@ -439,6 +346,10 @@ sub each {
 	return $self;
 }
 
+*each_entry = \&each;
+
+*each_pair = \&each;
+
 =item each_cons()
   Iterates each key-value pair([ k, v ]) as array of consecutive <n> elements.
   
@@ -454,42 +365,6 @@ sub each_cons {
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->to_a->each_cons( $n, $block );
-}
-
-=item each_entry()
-  Iterate each key-value pair and pass it to the block
-  one by one. Return self.
-  
-  rh( 1 => 2, 3 => 4 )->each( sub {
-      my ( $key, $val ) = @_;
-      print "$key, $val, "
-  } )
-  # print "1, 2, 3, 4, "
-=cut
-
-sub each_entry {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->each->($block);
-}
-
-=item each_pair()
-  Iterate each key-value pair and pass it to the block
-  one by one. Return self.
-  
-  rh( 1 => 2, 3 => 4 )->each( sub {
-      my ( $key, $val ) = @_;
-      print "$key, $val, "
-  } )
-  # print "1, 2, 3, 4, "
-=cut
-
-sub each_pair {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->each($block);
 }
 
 =item each_slice()
@@ -690,6 +565,7 @@ sub fetch {
   Find the first key-value pair which result returned by
   the block is true. If default is given, return the default
   when such pair can't be found.
+  Alias: detect()
   
   rh( 'a' => 1, 'b' => 2 )->find( sub {
       my ( $key, $val ) = @_;
@@ -697,7 +573,7 @@ sub fetch {
   } )
   # return [ 'b', 2 ]
   
-  rh( 'a' => 1, 'b' => 2 )->find( sub { 'Not Found!' }, sub {
+  rh( 'a' => 1, 'b' => 2 )->detect( sub { 'Not Found!' }, sub {
       my ( $key, $val ) = @_;
       $val % 2 == 3;
   } )
@@ -705,31 +581,36 @@ sub fetch {
 =cut
 
 sub find {
-	my $self = shift @_;
-	ref($self) eq __PACKAGE__ or die;
+    my $self = shift @_;
+    ref($self) eq __PACKAGE__ or die;
 
-	return $self->detect(@_);
+    if ( @_ == 1 ) {
+        my ($block) = @_;
+        while ( my ( $key, $val ) = each %$self ) {
+            if ( $block->( $key, $val ) ) {
+                return ra( $key, $val );
+            }
+        }
+    }
+    elsif ( @_ == 2 ) {
+        my ( $default, $block ) = @_;
+        while ( my ( $key, $val ) = each %$self ) {
+            if ( $block->( $key, $val ) ) {
+                return ra( $key, $val );
+            }
+        }
+        return $default->();
+    }
+    else {
+        die 'ArgumentError: wrong number of arguments ('
+          . scalar(@_)
+          . ' for 0..1)';
+    }
+
+    return undef;
 }
 
-=item find_all()
-  Pass each key-value pair to the block and store all elements
-  which are true returned by the block to a Ruby::Collections::Array.
-  
-  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->find_all(
-      sub {
-          my ( $key, $val ) = @_;
-          looks_like_number($key) && looks_like_number($val);
-      }
-  )
-  # return [ [ 1, 2 ], [ 3, 4 ] ]
-=cut
-
-sub find_all {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->select($block);
-}
+*detect = \&find;
 
 =item find_index()
   Find the position of pair under certain condition. Condition can be
@@ -802,6 +683,7 @@ sub first {
 
 =item flat_map()
   Call map(), then call flatten(1).
+  Alias: collect_concat()
   
   rh( 1 => 2, 3 => 4 )->flat_map(
       sub {
@@ -813,11 +695,16 @@ sub first {
 =cut
 
 sub flat_map {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
+    my ( $self, $block ) = @_;
+    ref($self) eq __PACKAGE__ or die;
 
-	return $self->collect_concat($block);
+    my $new_ary = $self->map($block);
+    $new_ary->flattenEx(1);
+
+    return $new_ary;
 }
+
+*collect_concat = \&flat_map;
 
 =item flatten()
   Push each key & value into a Ruby::Collections::Array. If n is specified,
@@ -891,28 +778,26 @@ sub group_by {
 	return $new_hash;
 }
 
-=item has_key()
-  Check if key exist.
+=item include()
+  Check if key exists.
+  Alias: has_key(), has_member()
   
-  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1)                 # return 1
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->include(1)                 # return 1
   rh( 1 => 2, [ 3, { 4 => 5 } ] => 6, undef => 7 )->has_key([ 3, { 4 => 5 } ]) # return 1
-  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(undef)             # return 1
-  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(7)                 # return 0
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_member(undef)          # return 1
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->include(7)                 # return 0
 =cut
 
-sub has_key {
+sub include {
 	my ( $self, $key ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return ra( keys %$self )->include($key);
 }
 
-sub include {
-	my ( $self, $key ) = @_;
-	ref($self) eq __PACKAGE__ or die;
+*has_key = \&include;
 
-	return $self->has_key($key);
-}
+*has_member = \&include;
 
 sub inject {
 	my $self = shift @_;
@@ -921,12 +806,7 @@ sub inject {
 	return $self->to_a->inject(@_);
 }
 
-sub has_member {
-	my ( $self, $key ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->has_key($key);
-}
+*reduce = \&inject;
 
 sub has_value {
 	my ( $self, $val ) = @_;
@@ -1008,12 +888,43 @@ sub size {
 	return $self->length;
 }
 
-sub map {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
+=item map()
+  Transform each key-value pair and store them into a new Ruby::Collections::Array.
+  
+  rh( 1 => 2, 3 => 4 )->map(
+      sub {
+          my ( $key, $val ) = @_;
+          $key * $val;
+      }
+  )
+  # return [ 2, 12 ]
+=cut
 
-	return $self->collect($block);
+sub map {
+    my ( $self, $block ) = @_;
+    ref($self) eq __PACKAGE__ or die;
+
+    my $new_ary = ra;
+    while ( my ( $key, $val ) = each %$self ) {
+        $new_ary->push( $block->( $key, $val ) );
+    }
+
+    return $new_ary;
 }
+
+=item collect()
+  Transform each key-value pair and store them into a new Ruby::Collections::Array.
+  
+  rh( 1 => 2, 3 => 4 )->collect(
+      sub {
+          my ( $key, $val ) = @_;
+          $key * $val;
+      }
+  )
+  # return [ 2, 12 ]
+=cut
+
+*collect = \&map;
 
 sub max {
 	my ( $self, $block ) = @_;
@@ -1047,6 +958,8 @@ sub merge {
 	return $new_hash;
 }
 
+*update = \&merge;
+
 sub mergeEx {
 	my ( $self, $other_hash, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1063,6 +976,8 @@ sub mergeEx {
 
 	return $self;
 }
+
+*updateEx = \&mergeEx;
 
 sub min {
 	my ( $self, $block ) = @_;
@@ -1153,20 +1068,6 @@ sub partition {
 	return $new_ary;
 }
 
-sub update {
-	my ( $self, $other_hash, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->merge( $other_hash, $block );
-}
-
-sub updateEx {
-	my ( $self, $other_hash, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->mergeEx( $other_hash, $block );
-}
-
 sub rassoc {
 	my ( $self, $obj ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1178,13 +1079,6 @@ sub rassoc {
 	}
 
 	return undef;
-}
-
-sub reduce {
-	my $self = shift @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->inject(@_);
 }
 
 sub reject {
@@ -1232,6 +1126,19 @@ sub replace {
 	return $self;
 }
 
+=item select()
+  Pass each key-value pair to the block and store all elements
+  which are true returned by the block to a Ruby::Collections::Array.
+  
+  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->select(
+      sub {
+          my ( $key, $val ) = @_;
+          looks_like_number($key) && looks_like_number($val);
+      }
+  )
+  # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
+
 sub select {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1245,6 +1152,21 @@ sub select {
 
 	return $new_ary;
 }
+
+=item find_all()
+  Pass each key-value pair to the block and store all elements
+  which are true returned by the block to a Ruby::Collections::Array.
+  
+  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->find_all(
+      sub {
+          my ( $key, $val ) = @_;
+          looks_like_number($key) && looks_like_number($val);
+      }
+  )
+  # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
+
+*find_all = \&select;
 
 sub selectEx {
 	my ( $self, $block ) = @_;
