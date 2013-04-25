@@ -581,33 +581,33 @@ sub fetch {
 =cut
 
 sub find {
-    my $self = shift @_;
-    ref($self) eq __PACKAGE__ or die;
+	my $self = shift @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    if ( @_ == 1 ) {
-        my ($block) = @_;
-        while ( my ( $key, $val ) = each %$self ) {
-            if ( $block->( $key, $val ) ) {
-                return ra( $key, $val );
-            }
-        }
-    }
-    elsif ( @_ == 2 ) {
-        my ( $default, $block ) = @_;
-        while ( my ( $key, $val ) = each %$self ) {
-            if ( $block->( $key, $val ) ) {
-                return ra( $key, $val );
-            }
-        }
-        return $default->();
-    }
-    else {
-        die 'ArgumentError: wrong number of arguments ('
-          . scalar(@_)
-          . ' for 0..1)';
-    }
+	if ( @_ == 1 ) {
+		my ($block) = @_;
+		while ( my ( $key, $val ) = each %$self ) {
+			if ( $block->( $key, $val ) ) {
+				return ra( $key, $val );
+			}
+		}
+	}
+	elsif ( @_ == 2 ) {
+		my ( $default, $block ) = @_;
+		while ( my ( $key, $val ) = each %$self ) {
+			if ( $block->( $key, $val ) ) {
+				return ra( $key, $val );
+			}
+		}
+		return $default->();
+	}
+	else {
+		die 'ArgumentError: wrong number of arguments ('
+		  . scalar(@_)
+		  . ' for 0..1)';
+	}
 
-    return undef;
+	return undef;
 }
 
 *detect = \&find;
@@ -695,13 +695,13 @@ sub first {
 =cut
 
 sub flat_map {
-    my ( $self, $block ) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    my $new_ary = $self->map($block);
-    $new_ary->flattenEx(1);
+	my $new_ary = $self->map($block);
+	$new_ary->flattenEx(1);
 
-    return $new_ary;
+	return $new_ary;
 }
 
 *collect_concat = \&flat_map;
@@ -901,15 +901,15 @@ sub size {
 =cut
 
 sub map {
-    my ( $self, $block ) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    my $new_ary = ra;
-    while ( my ( $key, $val ) = each %$self ) {
-        $new_ary->push( $block->( $key, $val ) );
-    }
+	my $new_ary = ra;
+	while ( my ( $key, $val ) = each %$self ) {
+		$new_ary->push( $block->( $key, $val ) );
+	}
 
-    return $new_ary;
+	return $new_ary;
 }
 
 =item collect()

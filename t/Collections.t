@@ -6,11 +6,11 @@ use Test::Exception;
 use Test::Output;
 use Test::More tests => 20;
 
-use_ok('Ruby::Array');
-use_ok('Ruby::Hash');
+use_ok('Ruby::Collections::Array');
+use_ok('Ruby::Collections::Hash');
 use_ok('Ruby::Collections');
 
-is( ref( ra() ), 'Ruby::Array', 'Testing ra() raw type' );
+is( ref( ra() ), 'Ruby::Collections::Array', 'Testing ra() raw type' );
 
 is( reftype( ra() ), 'ARRAY', 'Testing ra() basic type' );
 
@@ -20,7 +20,7 @@ is_deeply( ra( [ 1, 2, 3 ] ), [ 1, 2, 3 ], 'Testing ra() with array ref' );
 
 is_deeply( ra( ra( 1, 2, 3 ) ), [ [ 1, 2, 3 ] ], 'Testing ra() with ra()' );
 
-is( ref( rh() ), 'Ruby::Hash', 'Testing rh() raw type' );
+is( ref( rh() ), 'Ruby::Collections::Hash', 'Testing rh() raw type' );
 
 is( reftype( rh() ), 'HASH', 'Testing rh() basic type' );
 

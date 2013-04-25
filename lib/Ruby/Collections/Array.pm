@@ -240,85 +240,6 @@ sub clear {
 	return $self;
 }
 
-=item
-  Transform each element and store them into a new Ruby::Collections::Array.
-=cut
-
-sub collect {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
-	for my $item ( @{$self} ) {
-		push( @new_ary, $block->($item) );
-	}
-
-	return $new_ary;
-}
-
-=item
-  Transform each element and store them in self.
-=cut
-
-sub collectEx {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my @new_ary;
-	for my $item ( @{$self} ) {
-		push( @new_ary, $block->($item) );
-	}
-	@{$self} = @new_ary;
-
-	return $self;
-}
-
-sub collect_concat {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
-	$self->collect($block)->each(
-		sub {
-			if ( reftype( $_[0] ) eq 'ARRAY' ) {
-				if ( $_[0]->has_any( sub { reftype( $_[0] ) eq 'ARRAY' } ) ) {
-					$new_ary->push( $_[0]->flatten(1) );
-				}
-				else {
-					$new_ary->concat( $_[0] );
-				}
-			}
-			else {
-				$new_ary->push( $_[0] );
-			}
-		}
-	);
-
-	return $new_ary;
-}
-
-=item map()
-  Transform each element and store them into a new Ruby::Collections::Array.
-=cut
-
-sub map {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->collect($block);
-}
-
-=item mapEx()
-  Transform each element and store them in self.
-=cut
-
-sub mapEx {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->collectEx($block);
-}
-
 sub combination {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -499,19 +420,6 @@ sub delete_if {
 	@{$self} = grep { !$block->($_) } @{$self};
 
 	return $self;
-}
-
-sub detect {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	for my $item ( @{$self} ) {
-		if ( $block->($item) ) {
-			return $item;
-		}
-	}
-
-	return undef;
 }
 
 sub drop {
@@ -806,8 +714,16 @@ sub find {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	return $self->detect($block);
+	for my $item ( @{$self} ) {
+		if ( $block->($item) ) {
+			return $item;
+		}
+	}
+
+	return undef;
 }
+
+*detect = \&find;
 
 sub find_all {
 	my ( $self, $block ) = @_;
@@ -818,6 +734,8 @@ sub find_all {
 
 	return $new_ary;
 }
+
+*select = \&find_all;
 
 sub find_index {
 	my ( $self, $obj_or_block ) = @_;
@@ -930,8 +848,27 @@ sub flat_map {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	return $self->collect_concat($block);
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
+	$self->map($block)->each(
+		sub {
+			if ( reftype( $_[0] ) eq 'ARRAY' ) {
+				if ( $_[0]->has_any( sub { reftype( $_[0] ) eq 'ARRAY' } ) ) {
+					$new_ary->push( $_[0]->flatten(1) );
+				}
+				else {
+					$new_ary->concat( $_[0] );
+				}
+			}
+			else {
+				$new_ary->push( $_[0] );
+			}
+		}
+	);
+
+	return $new_ary;
 }
+
+*collect_concat = \&flat_map;
 
 sub flatten {
 	my ( $self, $n ) = @_;
@@ -1045,6 +982,8 @@ sub include {
 	return 0;
 }
 
+*has_member = \&include;
+
 sub replace {
 	my ( $self, $other_ary ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1147,6 +1086,45 @@ sub length {
 	return scalar( @{$self} );
 }
 
+*size = \&length;
+
+=item map()
+  Transform each element and store them into a new Ruby::Collections::Array.
+=cut
+
+sub map {
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
+	for my $item ( @{$self} ) {
+		push( @new_ary, $block->($item) );
+	}
+
+	return $new_ary;
+}
+
+*collect = \&map;
+
+=item mapEx()
+  Transform each element and store them in self.
+=cut
+
+sub mapEx {
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	my @new_ary;
+	for my $item ( @{$self} ) {
+		push( @new_ary, $block->($item) );
+	}
+	@{$self} = @new_ary;
+
+	return $self;
+}
+
+*collectEx = \&mapEx;
+
 sub max {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1164,13 +1142,6 @@ sub max_by {
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->sort_by($block)->last;
-}
-
-sub has_member {
-	my ( $self, $obj ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->include($obj);
 }
 
 sub min {
@@ -1756,13 +1727,6 @@ sub sample {
 	}
 }
 
-sub select {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->find_all($block);
-}
-
 sub selectEx {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1844,13 +1808,6 @@ sub shuffleEx {
 	@{$self} = @new_ary;
 
 	return $self;
-}
-
-sub size {
-	my ($self) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->length;
 }
 
 sub slice {
