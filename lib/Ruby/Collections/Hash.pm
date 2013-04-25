@@ -913,6 +913,14 @@ sub keys {
 	return ra( keys %$self );
 }
 
+=item length()
+  Return the number of key-value pairs.
+  Alias: size()
+  
+  rh->length                # return 0
+  rh( 1 => 2, 3 => 4)->size # return 2
+=cut
+
 sub length {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -920,12 +928,7 @@ sub length {
 	return scalar( keys %$self );
 }
 
-sub size {
-	my ($self) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->length;
-}
+*size = \&length;
 
 =item map()
   Transform each key-value pair and store them into a new Ruby::Collections::Array.

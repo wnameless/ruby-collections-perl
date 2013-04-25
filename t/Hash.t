@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 76;
+use Test::More tests => 78;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -452,18 +452,6 @@ is(
 );
 
 is_deeply(
-	rh( 1 => 2, 3 => 4 )->map( sub { $_[0] + $_[1] } ),
-	[ 3, 7 ],
-	'Testing map()'
-);
-
-is_deeply(
-	rh( 1 => 2, 3 => 4 )->collect( sub { $_[0] * $_[1] } ),
-	[ 2, 12 ],
-	'Testing collect()'
-);
-
-is_deeply(
 	rh( 1 => 'a', 2 => 'b', 3 => 'a' )->invert,
 	{ a => 3, b => 2 },
 	'Testing invert()'
@@ -480,3 +468,19 @@ is( rh( 1 => 2, 3 => 2 )->key(2), 1, 'Testing key()' );
 is( rh( 1 => 2, 3 => 2 )->key(4), undef, 'Testing key() with nonexist value' );
 
 is_deeply( rh( 1 => 2, 3 => 4, 5 => 6 )->keys, [ 1, 3, 5 ], 'Testing keys()' );
+
+is( rh( 1 => 2, 3 => 4 )->length, 2, 'Testing length()' );
+
+is( rh->size, 0, 'Testing size()' );
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->map( sub { $_[0] + $_[1] } ),
+	[ 3, 7 ],
+	'Testing map()'
+);
+
+is_deeply(
+	rh( 1 => 2, 3 => 4 )->collect( sub { $_[0] * $_[1] } ),
+	[ 2, 12 ],
+	'Testing collect()'
+);
