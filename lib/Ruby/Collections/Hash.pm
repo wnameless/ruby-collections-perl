@@ -985,6 +985,13 @@ sub max_by {
 	return $self->to_a->max_by($block);
 }
 
+=item merge()
+  Merge all key-value pairs of other hash with self elements into a
+  new Ruby::Collections::Hash.
+  
+  rh( 1 => 2, 3 => 4 )->merge( { 3 => 3, 4 => 5 } ) # return { 1 => 2, 3 => 3, 4 => 5 }
+=cut
+
 sub merge {
 	my ( $self, $other_hash, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1004,6 +1011,12 @@ sub merge {
 }
 
 *update = \&merge;
+
+=item mergeEx()
+  Merge all key-value pairs of other hash with self elements and save result into self.
+  
+  rh( 1 => 2, 3 => 4 )->mergeEx( { 3 => 3, 4 => 5 } ) # return { 1 => 2, 3 => 3, 4 => 5 }
+=cut
 
 sub mergeEx {
 	my ( $self, $other_hash, $block ) = @_;
