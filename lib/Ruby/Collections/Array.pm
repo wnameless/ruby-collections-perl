@@ -1017,7 +1017,7 @@ sub group_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	my $new_hash = tie my %new_hash, 'Ruby::Hash';
+	my $new_hash = tie my %new_hash, 'Ruby::Collections::Hash';
 	for my $item ( @{$self} ) {
 		my $key = $block->($item);
 		if ( $new_hash->{$key} ) {
