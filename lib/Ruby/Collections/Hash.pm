@@ -959,9 +959,10 @@ sub map {
 
 =item max()
   Find the max element of a Ruby::Collections::Hash.
+  transform each element to scalar then compare it.
   
-  rh( 6 => 5, 11 => 3, 2 => 1 )->max                                    # return [ 6, 5 ]
-  rh( 6 => 5, 11 => 3, 2 => 1 )->max( sub { @$_[0][0] <=> @$_[1][0] } ) # return [ 11, 3 ]
+  rh( 6 => 5, 11 => 3, 2 => 1 )->max                                        # return [ 6, 5 ]
+  rh( 6 => 5, 11 => 3, 2 => 1 )->max( sub { @{$_[0]}[0] <=> @{$_[1]}[0] } ) # return [ 11, 3 ]
 =cut
 
 sub max {
@@ -1037,12 +1038,30 @@ sub mergeEx {
 
 *updateEx = \&mergeEx;
 
+=item min()
+  Find the min element of a Ruby::Collections::Hash. If block is not given,
+  transform each element to scalar then compare it.
+  
+  rh( 6 => 5, 11 => 3, 2 => 1 )->min # return [ 11, 3 ]
+  rh( 6 => 5, 11 => 3, 2 => 1 )->min( sub {
+  	  @{$_[0]}[1] - @{$_[0]}[0] <=> @{$_[1]}[1] - @{$_[1]}[0]
+  })
+  # return [ 11, 3 ]
+=cut
+
 sub min {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->to_a->min($block);
 }
+
+=item min_by()
+  Transform all elements by the given block and then find the max.
+  Return the element which is the origin of the max.
+  
+  rh( 6 => 5, 11 => 3, 2 => 20 )->min_by( sub { @{$_[0]}[0] + @{$_[0]}[1] } ) # return [ 6, 5 ]
+=cut
 
 sub min_by {
 	my ( $self, $block ) = @_;

@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 83;
+use Test::More tests => 86;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -510,3 +510,22 @@ is_deeply(
 my $rh = rh( 1 => 2, 3 => 4 );
 $rh->mergeEx( { 3 => 3, 4 => 5 } );
 is_deeply( $rh, { 1 => 2, 3 => 3, 4 => 5 }, 'Testing mergeEx()' );
+
+is_deeply( rh( 6 => 5, 11 => 3, 2 => 1 )->min, [ 11, 3 ], 'Testing min()' );
+
+is_deeply(
+	rh( 6 => 5, 11 => 3, 2 => 1 )->min(
+		sub {
+			@{ $_[0] }[1] - @{ $_[0] }[0] <=> @{ $_[1] }[1] - @{ $_[1] }[0];
+		}
+	),
+	[ 11, 3 ],
+	'Testing min() with block'
+);
+
+is_deeply(
+    rh( 6 => 5, 11 => 3, 2 => 20 )
+      ->min_by( sub { @{ $_[0] }[0] + @{ $_[0] }[1] } ),
+    [ 6, 5 ],
+    'Testing min_by()'
+);
