@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 71;
+use Test::More tests => 72;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -463,3 +463,8 @@ is_deeply(
 	'Testing collect()'
 );
 
+is_deeply(
+	rh( 1 => 'a', 2 => 'b', 3 => 'a' )->invert,
+	{ a => 3, b => 2 },
+	'Testing invert()'
+);

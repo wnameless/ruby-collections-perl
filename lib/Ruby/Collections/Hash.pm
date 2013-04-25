@@ -832,7 +832,7 @@ sub inject {
 =item inspect()
   Return the data structure in string form of self.
   
-  rh( [ 1, 2 ] => 3, 'a' => 'b' )->inspect # return {[1, 2]=>3, a=>b}
+  rh( [ 1, 2 ] => 3, 'a' => 'b' )->inspect # return { [ 1, 2 ] => 3, a => b }
 =cut
 
 sub inspect {
@@ -841,6 +841,12 @@ sub inspect {
 
 	return p_hash $self;
 }
+
+=item
+  Invert the whole hash. Let values be the keys and keys be the values.
+  
+  rh( 1 => 'a', 2 => 'b', 3 => 'a' )->invert # return { a => 3, b => 2 }
+=cut
 
 sub invert {
 	my ($self) = @_;
