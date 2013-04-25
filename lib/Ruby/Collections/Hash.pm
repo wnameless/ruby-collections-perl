@@ -890,6 +890,7 @@ sub size {
 
 =item map()
   Transform each key-value pair and store them into a new Ruby::Collections::Array.
+  Alias: collect()
   
   rh( 1 => 2, 3 => 4 )->map(
       sub {
@@ -911,18 +912,6 @@ sub map {
 
 	return $new_ary;
 }
-
-=item collect()
-  Transform each key-value pair and store them into a new Ruby::Collections::Array.
-  
-  rh( 1 => 2, 3 => 4 )->collect(
-      sub {
-          my ( $key, $val ) = @_;
-          $key * $val;
-      }
-  )
-  # return [ 2, 12 ]
-=cut
 
 *collect = \&map;
 
@@ -1129,6 +1118,7 @@ sub replace {
 =item select()
   Pass each key-value pair to the block and store all elements
   which are true returned by the block to a Ruby::Collections::Array.
+  Alias: find_all()
   
   rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->select(
       sub {
@@ -1152,19 +1142,6 @@ sub select {
 
 	return $new_ary;
 }
-
-=item find_all()
-  Pass each key-value pair to the block and store all elements
-  which are true returned by the block to a Ruby::Collections::Array.
-  
-  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->find_all(
-      sub {
-          my ( $key, $val ) = @_;
-          looks_like_number($key) && looks_like_number($val);
-      }
-  )
-  # return [ [ 1, 2 ], [ 3, 4 ] ]
-=cut
 
 *find_all = \&select;
 

@@ -725,18 +725,6 @@ sub find {
 
 *detect = \&find;
 
-sub find_all {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
-	@new_ary = grep { $block->($_) } @{$self};
-
-	return $new_ary;
-}
-
-*select = \&find_all;
-
 sub find_index {
 	my ( $self, $obj_or_block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1726,6 +1714,18 @@ sub sample {
 		return @{$self}[ int( rand( scalar( @{$self} ) ) ) ];
 	}
 }
+
+sub select {
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
+	@new_ary = grep { $block->($_) } @{$self};
+
+	return $new_ary;
+}
+
+*find_all = \&select;
 
 sub selectEx {
 	my ( $self, $block ) = @_;
