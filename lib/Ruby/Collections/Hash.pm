@@ -1070,12 +1070,31 @@ sub min_by {
 	return $self->to_a->min_by($block);
 }
 
+=item minmax()
+  Find the min & max elements of a Ruby::Collections::Hash. If block is not given,
+  transform each element to scalar then compare it.
+  
+  rh( 1 => 10, 2 => 9, 3 => 8 )->minmax # return [ [ 1, 10 ], [ 3, 8] ]
+  rh( 1 => 10, 2 => 9, 3 => 8 )->minmax( sub {
+      @{$_[0]}[1] - @{$_[0]}[0] <=> @{$_[1]}[1] - @{$_[1]}[0]
+  })
+  # return [ [ 3, 8 ], [ 1, 10 ] ]
+=cut
+
 sub minmax {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->to_a->minmax($block);
 }
+
+=item minmax_by()
+  Transform all elements by the given block and then find the min & max.
+  Return the element which is the origin of the min & max.
+  
+  rh( 6 => 5, 11 => 3, 2 => 20 )->minmax_by( sub { @{$_[0]}[0] * @{$_[0]}[1] } )
+  # return [ [ 6, 5 ], [ 2, 20 ] ]
+=cut
 
 sub minmax_by {
 	my ( $self, $block ) = @_;
