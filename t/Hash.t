@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 64;
+use Test::More tests => 65;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -420,3 +420,14 @@ is_deeply(
 	[ [ 'a', 1, 'z' ], [ 'c', 3, 'z' ] ],
 	'Testing grep() with block'
 );
+
+is_deeply(
+	rh( 1 => 3, 0 => 4, 2 => 5 )->group_by(
+		sub {
+			$_[0] + $_[1];
+		}
+	),
+	{ 4 => [ [ 1, 3 ], [ 0, 4 ] ], 7 => [ [ 2, 5 ] ] },
+	'Testing group_by()'
+);
+

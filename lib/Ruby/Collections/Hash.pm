@@ -863,6 +863,15 @@ sub grep {
 	return $self->to_a->grep( $pattern, $block );
 }
 
+=item group_by()
+  Group each element by the result of block, store them in a Ruby::Collections::Hash.
+  
+  rh( 1 => 3, 0 => 4, 2 => 5 )->group_by(sub {
+  	  $_[0] + $_[1]
+  })
+  #return
+=cut
+
 sub group_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -870,7 +879,7 @@ sub group_by {
 	my $new_hash = rh;
 	while ( my ( $key, $val ) = each %$self ) {
 		my $group = $block->( $key, $val );
-		if ( $new_hash->{$group} ) {
+		if ( defined $new_hash->{$group} ) {
 			$new_hash->{$group}->push( ra( $key, $val ) );
 		}
 		else {
