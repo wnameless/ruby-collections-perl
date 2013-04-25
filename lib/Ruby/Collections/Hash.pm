@@ -860,6 +860,13 @@ sub invert {
 	return $new_hash;
 }
 
+=item keep_if()
+  Pass all key-value pairs to the block and only keep the elements which get the results
+  returned by the block are true.
+  
+  rh( 1 => 1, 2 => 2, 3 => 3 )->keep_if( sub { $_[0] % 2 == 1 } ) # return { 1 => 1, 3 => 3 }
+=cut
+
 sub keep_if {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
