@@ -829,25 +829,17 @@ sub inject {
 
 *reduce = \&inject;
 
-sub has_value {
-	my ( $self, $val ) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return ra( values %$self )->include($val);
-}
+=item inspect()
+  Return the data structure in string form of self.
+  
+  rh( [ 1, 2 ] => 3, 'a' => 'b' )->inspect # return {[1, 2]=>3, a=>b}
+=cut
 
 sub inspect {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return p_hash $self;
-}
-
-sub to_s {
-	my ($self) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->inspect;
 }
 
 sub invert {
@@ -1280,6 +1272,20 @@ sub to_hash {
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self;
+}
+
+sub to_s {
+    my ($self) = @_;
+    ref($self) eq __PACKAGE__ or die;
+
+    return $self->inspect;
+}
+
+sub has_value {
+    my ( $self, $val ) = @_;
+    ref($self) eq __PACKAGE__ or die;
+
+    return ra( values %$self )->include($val);
 }
 
 sub values_at {
