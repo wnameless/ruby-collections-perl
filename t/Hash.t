@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 62;
+use Test::More tests => 64;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -402,4 +402,21 @@ is_deeply(
 	rh( 1 => [ 2, 3 ], 4 => 5 )->flatten(2),
 	[ 1, 2, 3, 4, 5 ],
 	'Testing flatten() with n'
+);
+
+is_deeply(
+	rh( 'a' => 1, '2' => 'b', 'c' => 3 )->grep(qr/^\[[a-z]/),
+	[ [ 'a', 1 ], [ 'c', 3 ] ],
+	'Testing grep()'
+);
+
+is_deeply(
+	rh( 'a' => 1, '2' => 'b', 'c' => 3 )->grep(
+		qr/^\[[a-z]/,
+		sub {
+			$_[0] << 'z';
+		}
+	),
+	[ [ 'a', 1, 'z' ], [ 'c', 3, 'z' ] ],
+	'Testing grep() with block'
 );

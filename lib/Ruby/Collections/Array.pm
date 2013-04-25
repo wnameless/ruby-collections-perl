@@ -1000,7 +1000,7 @@ sub grep {
 
 	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
-		if ( $item =~ $pattern ) {
+		if ( p_obj($item) =~ $pattern ) {
 			if ( defined $block ) {
 				push( @new_ary, $block->($item) );
 			}

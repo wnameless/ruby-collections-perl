@@ -843,6 +843,19 @@ sub flatten {
 	return $new_ary;
 }
 
+=item grep()
+  Using regex to match elements and store them in a Ruby::Collecitons::Array.
+  If block is given, transform each element by the block.
+  Note: This implementation is different from Ruby due to the missing of ===
+  operator in Perl.
+  
+  rh( 'a' => 1, '2' => 'b', 'c' => 3 )->grep(qr/^\[[a-z]/) # return [[a, 1], [c, 3]]
+  rh( 'a' => 1, '2' => 'b', 'c' => 3 )->grep( qr/^\[[a-z]/, sub {
+  	  $_[0] << 'z';
+  })
+  # return [[a, 1, z], [c, 3, z]]
+=cut
+
 sub grep {
 	my ( $self, $pattern, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
