@@ -891,6 +891,15 @@ sub group_by {
 	return $new_hash;
 }
 
+=item has_key()
+  Check if key exist.
+  
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1)                 # return 1
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 6, undef => 7 )->has_key([ 3, { 4 => 5 } ]) # return 1
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(undef)             # return 1
+  rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(7)                 # return 0
+=cut
+
 sub has_key {
 	my ( $self, $key ) = @_;
 	ref($self) eq __PACKAGE__ or die;

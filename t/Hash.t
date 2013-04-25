@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 65;
+use Test::More tests => 69;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -414,7 +414,7 @@ is_deeply(
 	rh( 'a' => 1, '2' => 'b', 'c' => 3 )->grep(
 		qr/^\[[a-z]/,
 		sub {
-			$_[0] << 'z';
+			$_[0]->push('z');
 		}
 	),
 	[ [ 'a', 1, 'z' ], [ 'c', 3, 'z' ] ],
@@ -430,4 +430,20 @@ is_deeply(
 	{ 4 => [ [ 1, 3 ], [ 0, 4 ] ], 7 => [ [ 2, 5 ] ] },
 	'Testing group_by()'
 );
+
+is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
+	1, 'Testing has_key()' );
+
+is(
+	rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )
+	  ->has_key( [ 3, { 4 => 5 } ] ),
+	1,
+	'Testing has_key() with array & hash'
+);
+
+is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
+	1, 'Testing has_key() with undef' );
+
+is( rh( 1 => 2, [ 3, { 4 => 5 } ] => 5, undef => 6 )->has_key(1),
+	1, 'Testing has_key() with nonexist key' );
 
