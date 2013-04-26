@@ -248,7 +248,7 @@ sub cycle {
 }
 
 =item delete_if()
-  Pass all key-value pairs into the block and remove them
+  Pass all key-value pairs into the block and remove them out of self
   if the results returned by the block are true.
   
   rh( 1 => 3, 2 => 4 )->delete_if( sub {
@@ -1219,6 +1219,17 @@ sub rassoc {
 
 	return undef;
 }
+
+=item reject()
+  Pass all key-value pairs into the block and store them into a Ruby::Collecitons::Array
+  if the results returned by the block are false.
+  
+  rh( 1 => 3, 2 => 4, 5 => 6 )->reject( sub {
+      my ( $key, $val ) = @_;
+      $key % 2 == 1;
+  } )
+  # return { 2 => 4, 5 => 6 }
+=cut
 
 sub reject {
 	my ( $self, $block ) = @_;
