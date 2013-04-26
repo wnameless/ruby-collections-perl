@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 99;
+use Test::More tests => 101;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -593,4 +593,26 @@ is(
 	),
 	{ 2 => 4, 5 => 6 },
 	'Testing reject()'
+);
+
+is_deeply(
+	rh( 1 => 3, 2 => 4 )->rejectEx(
+		sub {
+			my ( $key, $val ) = @_;
+			$key % 2 == 1;
+		}
+	),
+	{ 2 => 4 },
+	'Testing rejectEx()'
+);
+
+is(
+	rh( 1 => 3, 2 => 4 )->rejectEx(
+		sub {
+			my ( $key, $val ) = @_;
+			$key == 5;
+		}
+	),
+	undef,
+	'Testing rejectEx() with nothing changed'
 );

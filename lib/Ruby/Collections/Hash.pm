@@ -1245,6 +1245,22 @@ sub reject {
 	return $new_hash;
 }
 
+=item rejectEx()
+  Pass all key-value pairs into the block and remove them out of self
+  if the results returned by the block are true. Return undef if nothing is deleted.
+  
+  rh( 1 => 3, 2 => 4 )->rejectEx( sub {
+      my ( $key, $val ) = @_;
+      $key % 2 == 1;
+  } )
+  # return { 2 => 4 }
+  rh( 1 => 3, 2 => 4 )->rejectEx( sub {
+      my ( $key, $val ) = @_;
+      $key == 5;
+  } )
+  # return undef
+=cut
+
 sub rejectEx {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
