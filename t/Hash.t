@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 102;
+use Test::More tests => 103;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -629,3 +629,7 @@ stdout_is(
 	'5, 6, 3, 4, 1, 2, ',
 	'Testing reverse_each()'
 );
+
+my $rh = rh( 1 => 2 );
+$rh->replace( { 3 => 4, 5 => 6 } );
+is_deeply( $rh, { 3 => 4, 5 => 6 }, 'Testing replace()' );

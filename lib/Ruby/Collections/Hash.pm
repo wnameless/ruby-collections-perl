@@ -1300,6 +1300,12 @@ sub reverse_each {
 	return $new_ary;
 }
 
+=item replace()
+  Replace all elements with other hash.
+  
+  rh( 1 => 2 )->replace( { 3 => 4, 5 => 6 } ) # return { 3 => 4, 5 => 6 } 
+=cut
+
 sub replace {
 	my ( $self, $other_hash ) = @_;
 	ref($self) eq __PACKAGE__ or die;
