@@ -1109,7 +1109,11 @@ sub minmax_by {
   
   rh->has_none                                                   # return 1
   rh( 1 => 2 )->has_none                                         # return 0
-  rh( 'a' => 'b' )->has_none( sub { looks_like_number($_[0]) } ) # return 1
+  rh( 'a' => 'b' )->has_none( sub {
+  	  my ( $key, $val ) = @_;
+  	  looks_like_number($key);
+  })
+  # return 1
 =cut
 
 sub has_none {
@@ -1129,6 +1133,19 @@ sub has_none {
 
 	return 1;
 }
+
+=item has_one()
+  If hash has one element, return 1, otherwise 0. If block is given and one result of block
+  are true, return 1, otherwise 0.
+  
+  rh->has_one                                                           # return 0
+  rh( 1 => 2 )->has_one                                                 # return 1
+  rh( 'a' => 'b', 1 => 2 )->has_one( sub {
+  	  my ( $key, $val ) = @_;
+      looks_like_number($key);
+  })
+  # return 1
+=cut
 
 sub has_one {
 	my ( $self, $block ) = @_;
@@ -1152,6 +1169,15 @@ sub has_one {
 
 	return $count == 1 ? 1 : 0;
 }
+
+=item partition()
+  Separate elements into 2 groups by given block.
+  
+  rh( 'a' => 1, 2 => 'b', 'c' => 3, 4 => 'd' )->partition( sub{
+  	  my ( $key, $val ) = @_;
+  	  looks_like_number($key);
+  })
+=cut
 
 sub partition {
 	my ( $self, $block ) = @_;

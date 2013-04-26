@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 92;
+use Test::More tests => 96;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -559,3 +559,20 @@ is( rh( 1 => 2 )->has_none, 0, 'Testing has_none() with nonempty hash' );
 
 is( rh( 'a' => 'b' )->has_none( sub { looks_like_number( $_[0] ) } ),
 	1, 'Testing has_none() with block' );
+
+is( rh( 1 => 2 )->has_one, 1, 'Testing has_one()' );
+
+is( rh->has_one, 0, 'Testing has_one() with empty hash' );
+
+is( rh( 'a' => 'b', 1 => 2 )->has_one( sub { looks_like_number( $_[0] ) } ),
+	1, 'Testing has_one() with block' );
+
+is_deeply(
+	rh( 'a' => 1, 2 => 'b', 'c' => 3, 4 => 'd' )->partition(
+		sub {
+			looks_like_number( $_[0] );
+		}
+	),
+	[ [ [ 2, 'b' ], [ 4, 'd' ] ], [ [ 'a', 1 ], [ 'c', 3 ] ] ],
+	'Testing partition()'
+);
