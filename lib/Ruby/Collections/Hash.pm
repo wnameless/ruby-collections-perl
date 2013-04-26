@@ -612,6 +612,33 @@ sub find {
 
 *detect = \&find;
 
+=item find_all()
+  Pass each key-value pair to the block and store all elements
+  which are true returned by the block to a Ruby::Collections::Array.
+  
+  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->select(
+      sub {
+          my ( $key, $val ) = @_;
+          looks_like_number($key) && looks_like_number($val);
+      }
+  )
+  # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
+
+sub find_all {
+    my ( $self, $block ) = @_;
+    ref($self) eq __PACKAGE__ or die;
+
+    my $new_ary = ra;
+    while ( my ( $key, $val ) = each %$self ) {
+        if ( $block->( $key, $val ) ) {
+            $new_ary->push( ra( $key, $val ) );
+        }
+    }
+
+    return $new_ary;
+}
+
 =item find_index()
   Find the position of pair under certain condition. Condition can be
   an array which contains the target key & value or can be a block.
@@ -1316,9 +1343,9 @@ sub replace {
 }
 
 =item select()
-  Pass each key-value pair to the block and store all elements
-  which are true returned by the block to a Ruby::Collections::Array.
-  Alias: find_all()
+  Pass each key-value pair to the block and remain all elements
+  which are true returned by the block in self. Return undef if
+  nothing changed.
   
   rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->select(
       sub {
@@ -1326,24 +1353,43 @@ sub replace {
           looks_like_number($key) && looks_like_number($val);
       }
   )
-  # return [ [ 1, 2 ], [ 3, 4 ] ]
+  # return { 1 => 2, 3 => 4 }
 =cut
 
 sub select {
-	my ( $self, $block ) = @_;
-	ref($self) eq __PACKAGE__ or die;
+    my ( $self, $block ) = @_;
+    ref($self) eq __PACKAGE__ or die;
 
-	my $new_ary = ra;
-	while ( my ( $key, $val ) = each %$self ) {
-		if ( $block->( $key, $val ) ) {
-			$new_ary->push( ra( $key, $val ) );
-		}
-	}
+    my $new_hash = rh;
+    while ( my ( $key, $val ) = each %$self ) {
+        if ( $block->( $key, $val ) ) {
+            $new_hash->{$key} = $val;
+        }
+    }
 
-	return $new_ary;
+    return $new_hash;
 }
 
-*find_all = \&select;
+=item selectEx()
+  Pass each key-value pair to the block and remain all elements
+  which are true returned by the block in self. Return undef if
+  nothing changed.
+  
+  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->selectEx(
+      sub {
+          my ( $key, $val ) = @_;
+          looks_like_number($key) && looks_like_number($val);
+      }
+  )
+  # return { 1 => 2, 3 => 4 }
+  rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4')->selectEx(
+      sub {
+          my ( $key, $val ) = @_;
+          $key == 5;
+      }
+  )
+  # return undef
+=cut
 
 sub selectEx {
 	my ( $self, $block ) = @_;
@@ -1361,7 +1407,7 @@ sub selectEx {
 	}
 	else {
 		%$self = %$new_hash;
-		return $new_hash;
+		return $self;
 	}
 }
 

@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 103;
+use Test::More tests => 106;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -320,13 +320,13 @@ is(
 );
 
 is_deeply(
-	rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4' )->find_all(
+	rh( 'a' => 'b', 1 => 2, 'c' => 'd', [ 3, 4 ] => 5 )->find_all(
 		sub {
 			my ( $key, $val ) = @_;
-			looks_like_number($key) && looks_like_number($val);
+			$key eq '[3, 4]';
 		}
 	),
-	[ [ 1, 2 ], [ 3, 4 ] ],
+	[ [ '[3, 4]', 5 ] ],
 	'Testing find_all()'
 );
 
@@ -633,3 +633,26 @@ stdout_is(
 my $rh = rh( 1 => 2 );
 $rh->replace( { 3 => 4, 5 => 6 } );
 is_deeply( $rh, { 3 => 4, 5 => 6 }, 'Testing replace()' );
+
+is_deeply(
+	rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => '4' )->select(
+		sub {
+			my ( $key, $val ) = @_;
+			looks_like_number($key) && looks_like_number($val);
+		}
+	),
+	{ 1 => 2, 3 => 4 },
+	'Testing select()'
+);
+
+my $rh = rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => 4 );
+$rh->selectEx(
+	sub {
+		my ( $key, $val ) = @_;
+		looks_like_number($key) && looks_like_number($val);
+	}
+);
+is_deeply( $rh, { 1 => 2, 3 => 4 }, 'Testing selectEx()' );
+
+is_deeply( rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => 4 )->selectEx( sub { 1 } ),
+	undef, 'Testing selectEx() with nothing changed' );
