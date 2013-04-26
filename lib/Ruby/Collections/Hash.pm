@@ -1508,6 +1508,12 @@ sub store {
 	return $val;
 }
 
+=item take()
+  Take first n elements and put them into a Ruby::Collections::Array.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6)->take(2) # return [ [ 1, 2 ], [ 3, 4] ]
+=cut
+
 sub take {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
