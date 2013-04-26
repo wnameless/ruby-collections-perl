@@ -1276,11 +1276,28 @@ sub rejectEx {
 	}
 }
 
+=item reverse_each()
+  Iterate key-value pair backward to a block.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->reverse_each( sub {
+  	  my ( $key, $val ) = @_;
+  	  print "$key, $val, ";
+  } )
+  # print "5, 6, 3, 4, 1, 2, "
+=cut
+
 sub reverse_each {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	return $self->to_a->reverse_each($block);
+	my $new_ary = $self->to_a->reverseEx;
+	if ( defined $block ) {
+		for my $item ( @{$new_ary} ) {
+			$block->( @{$item}[0], @{$item}[1] );
+		}
+	}
+
+	return $new_ary;
 }
 
 sub replace {
@@ -1439,17 +1456,17 @@ sub to_hash {
 }
 
 sub to_s {
-    my ($self) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ($self) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    return $self->inspect;
+	return $self->inspect;
 }
 
 sub has_value {
-    my ( $self, $val ) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ( $self, $val ) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    return ra( values %$self )->include($val);
+	return ra( values %$self )->include($val);
 }
 
 sub values_at {

@@ -1612,13 +1612,14 @@ sub reverse_each {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
+	my $new_ary = $self->reverse;
 	if ( defined $block ) {
-		for my $item ( reverse( @{$self} ) ) {
+		for my $item ($new_ary) {
 			$block->($item);
 		}
 	}
 
-	return $self;
+	return $new_ary;
 }
 
 sub rindex {

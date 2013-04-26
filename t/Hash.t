@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 101;
+use Test::More tests => 102;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -615,4 +615,17 @@ is(
 	),
 	undef,
 	'Testing rejectEx() with nothing changed'
+);
+
+stdout_is(
+	sub {
+		rh( 1 => 2, 3 => 4, 5 => 6 )->reverse_each(
+			sub {
+				my ( $key, $val ) = @_;
+				print "$key, $val, ";
+			}
+		);
+	},
+	'5, 6, 3, 4, 1, 2, ',
+	'Testing reverse_each()'
 );
