@@ -69,7 +69,7 @@ sub has_any {
   Find the key and return the key-value pair in a Ruby::Collections::Array.
   Return undef if key is not found.
   
-  rh( 'a' => 123, 'b' => 456 )->assoc('b') # return [ 'b', '456' ]
+  rh( 'a' => 123, 'b' => 456 )->assoc('b') # return [ 'b', 456 ]
   rh( 'a' => 123, 'b' => 456 )->assoc('c') # return undef
 =cut
 
@@ -1198,6 +1198,14 @@ sub partition {
 
 	return $new_ary;
 }
+
+=item rassoc()
+  Find the value and return the key-value pair in a Ruby::Collections::Array.
+  Return undef if value is not found.
+  
+  rh( 'a' => 123, 'b' => 123 )->rassoc(123) # return [ 'a', 123 ]
+  rh( 'a' => 123, 'b' => 123 )->rassoc(456) # return undef
+=cut
 
 sub rassoc {
 	my ( $self, $obj ) = @_;

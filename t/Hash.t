@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 96;
+use Test::More tests => 98;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -576,3 +576,12 @@ is_deeply(
 	[ [ [ 2, 'b' ], [ 4, 'd' ] ], [ [ 'a', 1 ], [ 'c', 3 ] ] ],
 	'Testing partition()'
 );
+
+is_deeply(
+	rh( 'a' => 123, 'b' => 123 )->rassoc(123),
+	[ 'a', 123 ],
+	'Testing rassoc()'
+);
+
+is( rh( 'a' => 123, 'b' => 123 )->rassoc(456),
+	undef, 'Testing rassoc() with nonexist key' );
