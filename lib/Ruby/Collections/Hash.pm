@@ -1411,6 +1411,13 @@ sub selectEx {
 	}
 }
 
+=item shift()
+  Shift the first key-value pair out of self.
+  
+  rh( 1 => 2 )->shift # return [ 1, 2 ]
+  rh->shift           # undef
+=cut
+
 sub shift {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;

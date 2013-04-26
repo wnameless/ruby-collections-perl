@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 106;
+use Test::More tests => 109;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -656,3 +656,10 @@ is_deeply( $rh, { 1 => 2, 3 => 4 }, 'Testing selectEx()' );
 
 is_deeply( rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => 4 )->selectEx( sub { 1 } ),
 	undef, 'Testing selectEx() with nothing changed' );
+
+my $rh = rh( 1 => 2 );
+is_deeply( $rh->shift, [ 1, 2 ], 'Testing shift()' );
+
+is_deeply( $rh, {}, 'Testing after shift()' );
+
+is_deeply( rh->shift, undef, 'Testing shift() with empty hash' );
