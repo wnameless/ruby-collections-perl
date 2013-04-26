@@ -1885,7 +1885,7 @@ sub slice_before {
 				$group = tie my @group, 'Ruby::Collections::Array';
 				push( @group, $item );
 			}
-			elsif ( $item =~ $pattern ) {
+			elsif ( p_obj($item) =~ $pattern ) {
 				push( @new_ary, $group );
 				$group = tie my @group, 'Ruby::Collections::Array';
 				push( @group, $item );

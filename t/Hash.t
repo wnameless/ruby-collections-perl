@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 109;
+use Test::More tests => 111;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -663,3 +663,20 @@ is_deeply( $rh->shift, [ 1, 2 ], 'Testing shift()' );
 is_deeply( $rh, {}, 'Testing after shift()' );
 
 is_deeply( rh->shift, undef, 'Testing shift() with empty hash' );
+
+is_deeply(
+	rh( 'a' => 1, 'b' => 0, 'c' => 0, 'd' => 1 )->slice_before(
+		sub {
+			my ( $key, $val ) = @_;
+			$val == 0;
+		}
+	),
+	[ [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ], [ 'd', 1 ] ] ],
+	'Testing slice_before()'
+);
+
+is_deeply(
+	rh( 'a' => 1, 'b' => 0, 'c' => 0, 'd' => 1 )->slice_before(qr/^\[[a-z]/),
+	[ [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ] ], [ [ 'd', 1 ] ] ],
+	'Testing slice_before() with regex'
+);

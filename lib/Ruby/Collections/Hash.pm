@@ -626,17 +626,17 @@ sub find {
 =cut
 
 sub find_all {
-    my ( $self, $block ) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    my $new_ary = ra;
-    while ( my ( $key, $val ) = each %$self ) {
-        if ( $block->( $key, $val ) ) {
-            $new_ary->push( ra( $key, $val ) );
-        }
-    }
+	my $new_ary = ra;
+	while ( my ( $key, $val ) = each %$self ) {
+		if ( $block->( $key, $val ) ) {
+			$new_ary->push( ra( $key, $val ) );
+		}
+	}
 
-    return $new_ary;
+	return $new_ary;
 }
 
 =item find_index()
@@ -1357,17 +1357,17 @@ sub replace {
 =cut
 
 sub select {
-    my ( $self, $block ) = @_;
-    ref($self) eq __PACKAGE__ or die;
+	my ( $self, $block ) = @_;
+	ref($self) eq __PACKAGE__ or die;
 
-    my $new_hash = rh;
-    while ( my ( $key, $val ) = each %$self ) {
-        if ( $block->( $key, $val ) ) {
-            $new_hash->{$key} = $val;
-        }
-    }
+	my $new_hash = rh;
+	while ( my ( $key, $val ) = each %$self ) {
+		if ( $block->( $key, $val ) ) {
+			$new_hash->{$key} = $val;
+		}
+	}
 
-    return $new_hash;
+	return $new_hash;
 }
 
 =item selectEx()
@@ -1431,11 +1431,66 @@ sub shift {
 	return undef;
 }
 
+=item slice_before()
+  Separate elements into groups, the first element of each group is
+  defined by block or regex.
+  
+  rh( 'a' => 1, 'b' => 0, 'c' => 0, 'd' => 1 )->slice_before( sub {
+  	  my ( $key, $val ) = @_;
+  	  $val == 0;
+  } )
+  # return [ [ [ a, 1 ] ], [ [ b, 0 ] ], [ [ c, 0 ], [ d, 1 ] ] ]
+  rh( 'a' => 1, 'b' => 0, 'c' => 0, 'd' => 1 )->slice_before(qr/^\[[a-z]/)
+  # return [ [ [ a, 1 ] ], [ [ b, 0 ] ], [ [ c, 0 ] ], [ [ d, 1 ] ] ]
+=cut
+
 sub slice_before {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
 
-	return $self->to_a->slice_before(@_);
+	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
+	my $group = undef;
+	if ( ref( @_[0] ) eq 'CODE' ) {
+		my $block = shift @_;
+
+		while ( my ( $key, $val ) = each %$self ) {
+			if ( not defined $group ) {
+				$group = tie my @group, 'Ruby::Collections::Array';
+				push( @group, ra( $key, $val ) );
+			}
+			elsif ( $block->( $key, $val ) ) {
+				push( @new_ary, $group );
+				$group = tie my @group, 'Ruby::Collections::Array';
+				push( @group, ra( $key, $val ) );
+			}
+			else {
+				push( @{$group}, ra( $key, $val ) );
+			}
+		}
+	}
+	else {
+		my $pattern = shift @_;
+
+		while ( my ( $key, $val ) = each %$self ) {
+			if ( not defined $group ) {
+				$group = tie my @group, 'Ruby::Collections::Array';
+				push( @group, ra( $key, $val ) );
+			}
+			elsif ( ra( $key, $val )->to_s =~ $pattern ) {
+				push( @new_ary, $group );
+				$group = tie my @group, 'Ruby::Collections::Array';
+				push( @group, ra( $key, $val ) );
+			}
+			else {
+				push( @{$group}, ra( $key, $val ) );
+			}
+		}
+	}
+	if ( defined $group && $group->has_any ) {
+		push( @new_ary, $group );
+	}
+
+	return $new_ary;
 }
 
 sub store {
@@ -1492,9 +1547,7 @@ sub to_a {
 
 	my $new_array = ra();
 	while ( my ( $key, $val ) = each %$self ) {
-		my $pair = ra();
-		$pair->push( $key, $val );
-		$new_array->push($pair);
+		$new_array->push( ra( $key, $val ) );
 	}
 
 	return $new_array;
