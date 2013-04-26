@@ -1493,6 +1493,12 @@ sub slice_before {
 	return $new_ary;
 }
 
+=item store()
+  Store a key-value pair.
+  
+  rh( 1 => 2 )->store( 3, 4 ) # return 4
+=cut
+
 sub store {
 	my ( $self, $key, $val ) = @_;
 	ref($self) eq __PACKAGE__ or die;

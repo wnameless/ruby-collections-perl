@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 111;
+use Test::More tests => 113;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -680,3 +680,8 @@ is_deeply(
 	[ [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ] ], [ [ 'd', 1 ] ] ],
 	'Testing slice_before() with regex'
 );
+
+my $rh = rh( 1 => 2 );
+is( $rh->store( 3, 4 ), 4, 'Testing store()' );
+
+is_deeply( $rh, { 1 => 2, 3 => 4 }, 'Testing after store()' );
