@@ -1631,6 +1631,13 @@ sub values_at {
 	return $new_array;
 }
 
+=item zip()
+  Call to_a first, then zip an array of elements into self.
+  
+  rh( 1 => [ 2, 3 ], 4 => [ 5, 6 ], 7 => 8 )->zip( [ 9, 10 ] )
+  # return [ [ [ 1, [ 2, 3 ] ], 9 ], [ [ 4, [ 5, 6 ] ], 10 ], [ [ 7, 8 ], undef ] ]
+=cut
+
 sub zip {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;

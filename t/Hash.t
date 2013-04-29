@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 121;
+use Test::More tests => 122;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -724,4 +724,10 @@ is(
 	rh( 1 => 2, 3 => 4, 5 => 6 )->values_at( 3, 4, 6 ),
 	[ 4, undef, undef ],
 	'Testing values_at()'
+);
+
+is_deeply(
+	rh( 1 => [ 2, 3 ], 4 => [ 5, 6 ], 7 => 8 )->zip( [ 9, 10 ] ),
+	[ [ [ 1, [ 2, 3 ] ], 9 ], [ [ 4, [ 5, 6 ] ], 10 ], [ [ 7, 8 ], undef ] ],
+	'Testing zip()'
 );
