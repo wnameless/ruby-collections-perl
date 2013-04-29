@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 114;
+use Test::More tests => 116;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -690,4 +690,18 @@ is_deeply(
 	rh( 1 => 2, 3 => 4, 5 => 6 )->take(2),
 	[ [ 1, 2 ], [ 3, 4 ] ],
 	'Testing take()'
+);
+
+dies_ok { rh( 1 => 2, 3 => 4, 5 => 6 )->take(-1) }
+'Testing take() with negative array size';
+
+is_deeply(
+	rh( 1 => 2, 3 => 4, 5 => 6 )->take_while(
+		sub {
+			my ( $key, $val ) = @_;
+			$key <= 3;
+		}
+	),
+	[ [ 1, 2 ], [ 3, 4 ] ],
+	'Testing take_while()'
 );

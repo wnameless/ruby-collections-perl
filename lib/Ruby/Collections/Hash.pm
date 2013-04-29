@@ -1511,7 +1511,7 @@ sub store {
 =item take()
   Take first n elements and put them into a Ruby::Collections::Array.
   
-  rh( 1 => 2, 3 => 4, 5 => 6)->take(2) # return [ [ 1, 2 ], [ 3, 4] ]
+  rh( 1 => 2, 3 => 4, 5 => 6 )->take(2) # return [ [ 1, 2 ], [ 3, 4 ] ]
 =cut
 
 sub take {
@@ -1535,6 +1535,17 @@ sub take {
 		die 'ArgumentError: wrong number of arguments (0 for 1)';
 	}
 }
+
+=item take_while()
+  Start to take elements while result returned by block is true and
+  put them into a Ruby::Collections::Array.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->take_while( sub {
+  	  my ( $key, $val ) = @_;
+  	  $key <= 3;
+  } )
+  # return [ [ 1, 2 ], [ 3, 4 ] ]
+=cut
 
 sub take_while {
 	my ( $self, $block ) = @_;
