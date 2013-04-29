@@ -1613,6 +1613,12 @@ sub has_value {
 	return ra( values %$self )->include($val);
 }
 
+=item values_at()
+  Put all values corresponding to the input keys into a Ruby::Collections::Array.
+  
+  rh( 1 => 2, 3 => 4, 5 => 6 )->values_at( 3, 4, 6 ) # return [ 4, undef, undef ]
+=cut
+
 sub values_at {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
