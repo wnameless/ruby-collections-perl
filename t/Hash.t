@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 118;
+use Test::More tests => 120;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -714,3 +714,8 @@ is_deeply(
 
 my $rh = rh;
 is( $rh, $rh->to_h, 'Testing to_h()' );
+
+is( rh( 1 => 2, 3 => 4 )->has_value(4), 1, 'Testing has_value()' );
+
+is( rh( 1 => 2, 3 => 4 )->has_value(5),
+	0, 'Testing has_value() with nonexist value' )

@@ -1599,6 +1599,13 @@ sub to_h {
 
 *to_hash = \&to_h;
 
+=item has_value()
+  Retuen 1 if a value exists, otherwise 0.
+  
+  rh( 1 => 2, 3 => 4 )->has_value(4) # return 1
+  rh( 1 => 2, 3 => 4 )->has_value(5) # return 0
+=cut
+
 sub has_value {
 	my ( $self, $val ) = @_;
 	ref($self) eq __PACKAGE__ or die;
