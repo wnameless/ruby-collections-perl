@@ -858,6 +858,7 @@ sub inject {
 
 =item inspect()
   Return the data structure in string form of self.
+  Alias: to_s()
   
   rh( [ 1, 2 ] => 3, 'a' => 'b' )->inspect # return { [ 1, 2 ] => 3, a => b }
 =cut
@@ -868,6 +869,8 @@ sub inspect {
 
 	return p_hash $self;
 }
+
+*to_s = \&inspect;
 
 =item
   Invert the whole hash. Let values be the keys and keys be the values.
@@ -1564,6 +1567,12 @@ sub take_while {
 	return $new_ary;
 }
 
+=item to_a()
+  Converts self to a nested array of [ key, value ] Ruby::Collections::Array.
+  
+  rh( 1 => 2, 'a' => 'b' )->to_a # return [ [ 1, 2 ], [ a, b ] ]
+=cut
+
 sub to_a {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1576,6 +1585,11 @@ sub to_a {
 	return $new_array;
 }
 
+=item to_h()
+  Return self;
+  Alias: to_hash()
+=cut
+
 sub to_h {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1583,19 +1597,7 @@ sub to_h {
 	return $self;
 }
 
-sub to_hash {
-	my ($self) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self;
-}
-
-sub to_s {
-	my ($self) = @_;
-	ref($self) eq __PACKAGE__ or die;
-
-	return $self->inspect;
-}
+*to_hash = \&to_h;
 
 sub has_value {
 	my ( $self, $val ) = @_;

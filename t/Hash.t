@@ -4,7 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 116;
+use Test::More tests => 118;
 use Ruby::Collections;
 
 is( rh( undef => 2 )->has_all, 1, 'Testing has_all()' );
@@ -705,3 +705,12 @@ is_deeply(
 	[ [ 1, 2 ], [ 3, 4 ] ],
 	'Testing take_while()'
 );
+
+is_deeply(
+	rh( 1 => 2, 'a' => 'b' )->to_a,
+	[ [ 1, 2 ], [ 'a', 'b' ] ],
+	'Testing to_a()'
+);
+
+my $rh = rh;
+is( $rh, $rh->to_h, 'Testing to_h()' );
