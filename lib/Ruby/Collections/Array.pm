@@ -193,6 +193,9 @@ sub bsearch {
 =item chunk()
   Chunk consecutive elements which is under certain condition
   into [ condition, [ elements... ] ] array.
+  
+  ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { $_[0] % 2 } )
+  # return [ [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ]
 =cut
 
 sub chunk {
@@ -296,7 +299,7 @@ sub combination {
 }
 
 =item compact()
-  Remove all undef elements and store the result in a Ruby::Collection::Array.
+  Remove all undef elements and store the result in a Ruby::Collections::Array.
   
   ra( 1, undef, 3, undef, 5 )->compact # return [ 1, 3, 5 ]
 =cut
@@ -314,6 +317,12 @@ sub compact {
 
 	return $new_ary;
 }
+
+=item compactEx()
+  Remove all undef elements in self.
+  
+  ra( 1, undef, 3, undef, 5 )->compact # return [ 1, 3, 5 ]
+=cut
 
 sub compactEx {
 	my ($self) = @_;
