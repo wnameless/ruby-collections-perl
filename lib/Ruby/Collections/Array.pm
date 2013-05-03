@@ -240,6 +240,16 @@ sub clear {
 	return $self;
 }
 
+=item combination()
+  Generate all combinations of certain length n of all elements.
+  
+  ra( 1, 2, 3, 4 )->combination(2) # return  [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]] 
+  ra( 1, 2, 3 )->combination( 3, sub {
+  	  print $_[0]->to_s;
+  } )
+  # print "[3, 1, 2]"
+=cut
+
 sub combination {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -284,6 +294,12 @@ sub combination {
 		return $new_ary;
 	}
 }
+
+=item compact()
+  Remove all undef elements and store the result in a Ruby::Collection::Array.
+  
+  ra( 1, undef, 3, undef, 5 )->compact # return [ 1, 3, 5 ]
+=cut
 
 sub compact {
 	my ($self) = @_;
@@ -2096,7 +2112,7 @@ sub union {
 }
 
 if ( __FILE__ eq $0 ) {
-	p ra( 1, 3, 2, 4, 5, [ 1, 2 ] ) & [ 1, 3, 2, 4, 5, [ 1, 2 ] ];
+	p ra( 1, 2, 3 )->combination(3, sub {});
 }
 
 1;

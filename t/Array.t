@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 26;
+use Test::More tests => 29;
 use Ruby::Collections;
 
 is_deeply(
@@ -92,5 +92,20 @@ is_deeply(
 );
 
 my $ra = ra( 'W', 'H', 'H' );
-$ra->collectEx( sub { $_[0] . 'a' } );
+$ra->mapEx( sub { $_[0] . 'a' } );
 is_deeply( $ra, [ 'Wa', 'Ha', 'Ha' ], 'Testing mapEx()' );
+
+is_deeply(
+	ra( 1, 2, 3, 4 )->combination(2),
+	[ [ 1, 2 ], [ 1, 3 ], [ 1, 4 ], [ 2, 3 ], [ 2, 4 ], [ 3, 4 ] ],
+	'Testing combination()'
+);
+
+is( p_obj( ra( 1, 2, 3 )->combination( 3, sub { } ) ),
+	'[1, 2, 3]', 'Testing combination() with block' );
+
+is_deeply(
+	ra( 1, undef, 3, undef, 5 )->compact,
+	[ 1, 3, 5 ],
+	'Testing compact()'
+);
