@@ -18,6 +18,8 @@ use overload (
 	'<<' => \&double_left_arrows,
 	'==' => \&eql,
 	'eq' => \&eql,
+	'!=' => \&not_eql,
+	'ne' => \&not_eql,
 	'""' => \&to_s
 );
 
@@ -642,6 +644,13 @@ sub eql {
 	}
 
 	return 1;
+}
+
+sub not_eql {
+	my ( $self, $other ) = @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	return $self->eql($other) == 0 ? 1 : 0;
 }
 
 sub fetch {
