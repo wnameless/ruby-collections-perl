@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 26;
+use Test::More tests => 30;
 use Ruby::Collections;
 
 is_deeply(
@@ -68,12 +68,14 @@ is( ra( 1, 2, 3, 4 )->bsearch( sub { $_[0] == 5 } ),
 	undef, 'Testing bsearch() with false condition' );
 
 is_deeply(
-	ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { [ $_[0] % 2 ] } ),
-	ra( [ [1], [ 1, 3 ] ], [ [0], [ 2, 4 ] ], [ [1], [5] ], [ [0], [6] ] ),
+	ra( 1, 3, 2, 4, 5, 6 )->chunk( sub { $_[0] % 2 } ),
+	ra( [ 1, [ 1, 3 ] ], [ 0, [ 2, 4 ] ], [ 1, [5] ], [ 0, [6] ] ),
 	'Testing chunk()'
 );
 
-is_deeply( ra( 1, 2, 3 )->clear, ra, 'Testing clear()' );
+my $ra = ra( 1, 2, 3 );
+$ra->clear;
+is_deeply( $ra, ra, 'Testing clear()' );
 
 is_deeply(
 	ra( 'a', 'bc', 'def' )->collect( sub { length( $_[0] ) } ),
@@ -94,3 +96,22 @@ is_deeply(
 my $ra = ra( 'W', 'H', 'H' );
 $ra->collectEx( sub { $_[0] . 'a' } );
 is_deeply( $ra, ra( 'Wa', 'Ha', 'Ha' ), 'Testing mapEx()' );
+
+is_deeply(
+	ra( 1, 2, 3, 4 )->combination(2),
+	ra( [ 2, 3 ], [ 2, 1 ], [ 2, 4 ], [ 3, 1 ], [ 3, 4 ], [ 1, 4 ] ),
+	'Testing combination()'
+);
+
+is( p_obj( ra( 1, 2, 3 )->combination( 3, sub { } ) ),
+	'[1, 2, 3]', 'Testing combination() with block' );
+
+is_deeply(
+	ra( 1, undef, 3, undef, 5 )->compact,
+	ra( 1, 3,     5 ),
+	'Testing compact()'
+);
+
+my $ra = ra( 1, undef, 3, undef, 5 );
+$ra->compactEx;
+is_deeply( $ra, ra( 1, 3, 5 ), 'Testing compactEx()' );
