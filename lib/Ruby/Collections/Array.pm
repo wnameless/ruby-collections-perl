@@ -17,7 +17,8 @@ use overload (
 	'|'  => \&union,
 	'<<' => \&double_left_arrows,
 	'==' => \&eql,
-	'eq' => \&eql
+	'eq' => \&eql,
+	'""' => \&to_s
 );
 
 =item add()
@@ -2096,7 +2097,8 @@ sub union {
 }
 
 if ( __FILE__ eq $0 ) {
-	p ra( 1, 3, 2, 4, 5, [ 1, 2 ] ) & [ 1, 3, 2, 4, 5, [ 1, 2 ] ];
+	my $ref = [ 1, 2, 3, 4, 5, 11 ];
+	p ra($ref)->map( sub { $_[0] * 2 } )->minmax;
 }
 
 1;
