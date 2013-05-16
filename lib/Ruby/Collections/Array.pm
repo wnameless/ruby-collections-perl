@@ -339,6 +339,12 @@ sub compactEx {
 	return $self;
 }
 
+=item concat()
+  Append another array to self.
+  
+  ra(1, 2, 3)->concat([4, 5]) # return [1, 2, 3, 4, 5]
+=cut
+
 sub concat {
 	my ( $self, $other_ary ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -347,6 +353,12 @@ sub concat {
 
 	return $self;
 }
+
+=item count()
+  Return the amount of elements
+  
+  ra(1, 2, 3)->count() #return 3 
+=cut
 
 sub count {
 	my ( $self, $obj_or_block ) = @_;

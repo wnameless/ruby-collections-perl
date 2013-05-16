@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 30;
+use Test::More tests => 32;
 use Ruby::Collections;
 
 is_deeply(
@@ -115,3 +115,12 @@ is_deeply(
 my $ra = ra( 1, undef, 3, undef, 5 );
 $ra->compactEx;
 is_deeply( $ra, [ 1, 3, 5 ], 'Testing compactEx()' );
+
+is_deeply(
+	ra( 1, 2, 3 )->concat( [ 4, [ 5, 6 ] ] ),
+	[ 1, 2, 3, 4, [ 5, 6 ] ],
+	'Testing concat()'
+);
+
+my $ra = ra(1, 2, 3);
+is_deeply( $ra->count(), 3, 'Testing count()');
