@@ -21,7 +21,7 @@ is( rh( 2 => 4, 6 => 8 )->has_any( sub { $_[0] % 2 == 1 } ),
 
 is_deeply(
 	rh( 'a' => 123, 'b' => 456 )->assoc('b'),
-	[ 'b', 456 ],
+	ra( 'b', 456 ),
 	'Testing assoc()'
 );
 
@@ -30,18 +30,18 @@ is( rh( 'a' => 123, 'b' => 456 )->assoc('c'),
 
 is_deeply(
 	rh( 1 => 1, 2 => 2, 3 => 3, 5 => 5, 4 => 4 )->chunk( sub { $_[0] % 2 } ),
-	[
+	ra(
 		[ 1, [ [ 1, 1 ] ] ],
 		[ 0, [ [ 2, 2 ] ] ],
 		[ 1, [ [ 3, 3 ], [ 5, 5 ] ] ],
 		[ 0, [ [ 4, 4 ] ] ]
-	],
+	),
 	'Testing chunk()'
 );
 
 my $rh = rh( 1 => 2, 3 => 4 );
 $rh->clear;
-is_deeply( $rh, {}, 'Testing clear()' );
+is_deeply( $rh, rh, 'Testing clear()' );
 
 is( rh( 'a' => 1 )->delete('a'), 1, 'Testing delete()' );
 
@@ -81,11 +81,11 @@ $rh->delete_if(
 		$key eq p_obj( [ 1, 5 ] );
 	}
 );
-is_deeply( $rh, { 2 => 4 }, 'Testing delete_if()' );
+is_deeply( $rh, rh( 2 => 4 ), 'Testing delete_if()' );
 
 is_deeply(
 	rh( 1 => 'a', undef => 0, 'b' => 2 )->drop(1),
-	[ [ 'undef', 0 ], [ 'b', 2 ] ],
+	ra( [ 'undef', 0 ], [ 'b', 2 ] ),
 	'Testing drop()'
 );
 
@@ -99,7 +99,7 @@ is_deeply(
 			$key % 2 == 1;
 		}
 	),
-	[ [ 1, 3 ], [ 2, 4 ], [ 5, 7 ] ],
+	ra( [ 1, 3 ], [ 2, 4 ], [ 5, 7 ] ),
 	'Testing drop_while()'
 );
 
@@ -123,7 +123,7 @@ is_deeply(
 			$key + $val;
 		}
 	),
-	{ 1 => 2, 3 => 4 },
+	rh( 1 => 2, 3 => 4 ),
 	'Testing each() return value'
 );
 
@@ -164,7 +164,7 @@ is_deeply(
 			$key + $val;
 		}
 	),
-	{ 1 => 2, 3 => 4 },
+	rh( 1 => 2, 3 => 4 ),
 	'Testing each_entry() return value'
 );
 
@@ -188,13 +188,13 @@ is_deeply(
 			$key + $val;
 		}
 	),
-	{ 1 => 2, 3 => 4 },
+	rh( 1 => 2, 3 => 4 ),
 	'Testing each_pair() return value'
 );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4, 5 => 6 )->each_slice(2),
-	[ [ [ 1, 2 ], [ 3, 4 ] ], [ [ 5, 6 ] ] ],
+	ra( [ [ 1, 2 ], [ 3, 4 ] ], [ [ 5, 6 ] ] ),
 	'Testing each_slice()'
 );
 
@@ -262,7 +262,7 @@ is( rh( undef => 1 )->is_empty, 0, 'Testing is_empty() with undef key' );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->entries,
-	[ [ 1, 2 ], [ 3, 4 ] ],
+	ra( [ 1, 2 ], [ 3, 4 ] ),
 	'Testing entries()'
 );
 
@@ -300,7 +300,7 @@ is_deeply(
 			$val % 2 == 0;
 		}
 	),
-	[ 'b', 2 ],
+	ra( 'b', 2 ),
 	'Testing find()'
 );
 
@@ -326,7 +326,7 @@ is_deeply(
 			$key eq '[3, 4]';
 		}
 	),
-	[ [ '[3, 4]', 5 ] ],
+	ra( ra( '[3, 4]', 5 ) ),
 	'Testing find_all()'
 );
 
@@ -338,11 +338,11 @@ is( rh( 1 => 2, 3 => 4 )->find_index( [ 5, 6 ] ),
 is( rh( 1 => 2, 3 => 4 )->find_index( sub { $_[0] == 3 } ),
 	1, 'Testing find_index() with block' );
 
-is_deeply( rh( 1 => 2, 3 => 4 )->first, [ 1, 2 ], 'Testing first()' );
+is_deeply( rh( 1 => 2, 3 => 4 )->first, ra( 1, 2 ), 'Testing first()' );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->first(5),
-	[ [ 1, 2 ], [ 3, 4 ] ],
+	ra( [ 1, 2 ], [ 3, 4 ] ),
 	'Testing first() with n'
 );
 
@@ -351,31 +351,31 @@ dies_ok { rh( 1 => 2, 3 => 4 )->first(-1) }
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->flat_map( sub { [ $_[0] * $_[1] * 10 ] } ),
-	[ 20, 120 ],
+	ra( 20, 120 ),
 	'Testing flat_map()'
 );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->collect_concat( sub { [ [ $_[0] * $_[1] ] ] } ),
-	[ [2], [12] ],
+	ra( [2], [12] ),
 	'Testing collect_concat()'
 );
 
 is_deeply(
 	rh( 1 => [ 2, 3 ], 4 => 5 )->flatten,
-	[ 1, [ 2, 3 ], 4, 5 ],
+	ra( 1, [ 2, 3 ], 4, 5 ),
 	'Testing flatten()'
 );
 
 is_deeply(
 	rh( 1 => [ 2, 3 ], 4 => 5 )->flatten(2),
-	[ 1, 2, 3, 4, 5 ],
+	ra( 1, 2, 3, 4, 5 ),
 	'Testing flatten() with n'
 );
 
 is_deeply(
 	rh( 'a' => 1, '2' => 'b', 'c' => 3 )->grep(qr/^\[[a-z]/),
-	[ [ 'a', 1 ], [ 'c', 3 ] ],
+	ra( [ 'a', 1 ], [ 'c', 3 ] ),
 	'Testing grep()'
 );
 
@@ -386,7 +386,7 @@ is_deeply(
 			$_[0]->push('z');
 		}
 	),
-	[ [ 'a', 1, 'z' ], [ 'c', 3, 'z' ] ],
+	ra( [ 'a', 1, 'z' ], [ 'c', 3, 'z' ] ),
 	'Testing grep() with block'
 );
 
@@ -425,7 +425,7 @@ is_deeply(
 			$o;
 		}
 	),
-	[ 9, 12 ],
+	ra( 9, 12 ),
 	'Testing inject()'
 );
 
@@ -450,14 +450,14 @@ is(
 );
 
 is_deeply(
-	rh( 1 => 'a', 2 => 'b', 3 => 'a' )->invert,
-	{ a => 3, b => 2 },
+	rh( 1   => 'a', 2   => 'b', 3 => 'a' )->invert,
+	rh( 'a' => 3,   'b' => 2 ),
 	'Testing invert()'
 );
 
 is_deeply(
 	rh( 1 => 1, 2 => 2, 3 => 3 )->keep_if( sub { $_[0] % 2 == 1 } ),
-	{ 1 => 1, 3 => 3 },
+	rh( 1 => 1, 3 => 3 ),
 	'Testing keep_if()'
 );
 
@@ -465,7 +465,8 @@ is( rh( 1 => 2, 3 => 2 )->key(2), 1, 'Testing key()' );
 
 is( rh( 1 => 2, 3 => 2 )->key(4), undef, 'Testing key() with nonexist value' );
 
-is_deeply( rh( 1 => 2, 3 => 4, 5 => 6 )->keys, [ 1, 3, 5 ], 'Testing keys()' );
+is_deeply( rh( 1 => 2, 3 => 4, 5 => 6 )->keys, ra( 1, 3, 5 ),
+	'Testing keys()' );
 
 is( rh( 1 => 2, 3 => 4 )->length, 2, 'Testing length()' );
 
@@ -473,43 +474,43 @@ is( rh->size, 0, 'Testing size()' );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->map( sub { $_[0] + $_[1] } ),
-	[ 3, 7 ],
+	ra( 3, 7 ),
 	'Testing map()'
 );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->collect( sub { $_[0] * $_[1] } ),
-	[ 2, 12 ],
+	ra( 2, 12 ),
 	'Testing collect()'
 );
 
-is_deeply( rh( 6 => 5, 11 => 3, 2 => 1 )->max, [ 6, 5 ], 'Testing max()' );
+is_deeply( rh( 6 => 5, 11 => 3, 2 => 1 )->max, ra( 6, 5 ), 'Testing max()' );
 
 is_deeply(
 	rh( 6 => 5, 11 => 3, 2 => 1 )
 	  ->max( sub { @{ $_[0] }[0] <=> @{ $_[1] }[0] } ),
-	[ 11, 3 ],
+	ra( 11, 3 ),
 	'Testing max() with block'
 );
 
 is_deeply(
 	rh( 6 => 5, 11 => 3, 2 => 20 )
 	  ->max_by( sub { @{ $_[0] }[0] + @{ $_[0] }[1] } ),
-	[ 2, 20 ],
+	ra( 2, 20 ),
 	'Testing max_by()'
 );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4 )->merge( { 3 => 3, 4 => 5 } ),
-	{ 1 => 2, 3 => 3, 4 => 5 },
+	rh( 1 => 2, 3 => 3,          4   => 5 ),
 	'Testing merge()'
 );
 
 my $rh = rh( 1 => 2, 3 => 4 );
 $rh->mergeEx( { 3 => 3, 4 => 5 } );
-is_deeply( $rh, { 1 => 2, 3 => 3, 4 => 5 }, 'Testing mergeEx()' );
+is_deeply( $rh, rh( 1 => 2, 3 => 3, 4 => 5 ), 'Testing mergeEx()' );
 
-is_deeply( rh( 6 => 5, 11 => 3, 2 => 1 )->min, [ 11, 3 ], 'Testing min()' );
+is_deeply( rh( 6 => 5, 11 => 3, 2 => 1 )->min, ra( 11, 3 ), 'Testing min()' );
 
 is_deeply(
 	rh( 6 => 5, 11 => 3, 2 => 1 )->min(
@@ -517,20 +518,20 @@ is_deeply(
 			@{ $_[0] }[1] - @{ $_[0] }[0] <=> @{ $_[1] }[1] - @{ $_[1] }[0];
 		}
 	),
-	[ 11, 3 ],
+	ra( 11, 3 ),
 	'Testing min() with block'
 );
 
 is_deeply(
 	rh( 6 => 5, 11 => 3, 2 => 20 )
 	  ->min_by( sub { @{ $_[0] }[0] + @{ $_[0] }[1] } ),
-	[ 6, 5 ],
+	ra( 6, 5 ),
 	'Testing min_by()'
 );
 
 is_deeply(
 	rh( 1 => 10, 2 => 9, 3 => 8 )->minmax,
-	[ [ 1, 10 ], [ 3, 8 ] ],
+	ra( [ 1, 10 ], [ 3, 8 ] ),
 	'Testing minmax()'
 );
 
@@ -540,14 +541,14 @@ is_deeply(
 			@{ $_[0] }[1] - @{ $_[0] }[0] <=> @{ $_[1] }[1] - @{ $_[1] }[0];
 		}
 	),
-	[ [ 3, 8 ], [ 1, 10 ] ],
+	ra( [ 3, 8 ], [ 1, 10 ] ),
 	'Testing minmax() with block'
 );
 
 is_deeply(
 	rh( 6 => 5, 11 => 3, 2 => 20 )
 	  ->minmax_by( sub { @{ $_[0] }[0] * @{ $_[0] }[1] } ),
-	[ [ 6, 5 ], [ 2, 20 ] ],
+	ra( [ 6, 5 ], [ 2, 20 ] ),
 	'Testing mnimax_by()'
 );
 
@@ -571,13 +572,13 @@ is_deeply(
 			looks_like_number( $_[0] );
 		}
 	),
-	[ [ [ 2, 'b' ], [ 4, 'd' ] ], [ [ 'a', 1 ], [ 'c', 3 ] ] ],
+	ra( [ [ 2, 'b' ], [ 4, 'd' ] ], [ [ 'a', 1 ], [ 'c', 3 ] ] ),
 	'Testing partition()'
 );
 
 is_deeply(
 	rh( 'a' => 123, 'b' => 123 )->rassoc(123),
-	[ 'a', 123 ],
+	ra( 'a', 123 ),
 	'Testing rassoc()'
 );
 
@@ -591,7 +592,7 @@ is(
 			$key % 2 == 1;
 		}
 	),
-	{ 2 => 4, 5 => 6 },
+	rh( 2 => 4, 5 => 6 ),
 	'Testing reject()'
 );
 
@@ -602,7 +603,7 @@ is_deeply(
 			$key % 2 == 1;
 		}
 	),
-	{ 2 => 4 },
+	rh( 2 => 4 ),
 	'Testing rejectEx()'
 );
 
@@ -641,7 +642,7 @@ is_deeply(
 			looks_like_number($key) && looks_like_number($val);
 		}
 	),
-	{ 1 => 2, 3 => 4 },
+	rh( 1 => 2, 3 => 4 ),
 	'Testing select()'
 );
 
@@ -652,15 +653,15 @@ $rh->selectEx(
 		looks_like_number($key) && looks_like_number($val);
 	}
 );
-is_deeply( $rh, { 1 => 2, 3 => 4 }, 'Testing selectEx()' );
+is_deeply( $rh, rh( 1 => 2, 3 => 4 ), 'Testing selectEx()' );
 
 is_deeply( rh( 'a' => 'b', 1 => 2, 'c' => 'd', 3 => 4 )->selectEx( sub { 1 } ),
 	undef, 'Testing selectEx() with nothing changed' );
 
 my $rh = rh( 1 => 2 );
-is_deeply( $rh->shift, [ 1, 2 ], 'Testing shift()' );
+is_deeply( $rh->shift, ra( 1, 2 ), 'Testing shift()' );
 
-is_deeply( $rh, {}, 'Testing after shift()' );
+is_deeply( $rh, rh, 'Testing after shift()' );
 
 is_deeply( rh->shift, undef, 'Testing shift() with empty hash' );
 
@@ -671,24 +672,24 @@ is_deeply(
 			$val == 0;
 		}
 	),
-	[ [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ], [ 'd', 1 ] ] ],
+	ra( [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ], [ 'd', 1 ] ] ),
 	'Testing slice_before()'
 );
 
 is_deeply(
 	rh( 'a' => 1, 'b' => 0, 'c' => 0, 'd' => 1 )->slice_before(qr/^\[[a-z]/),
-	[ [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ] ], [ [ 'd', 1 ] ] ],
+	ra( [ [ 'a', 1 ] ], [ [ 'b', 0 ] ], [ [ 'c', 0 ] ], [ [ 'd', 1 ] ] ),
 	'Testing slice_before() with regex'
 );
 
 my $rh = rh( 1 => 2 );
 is( $rh->store( 3, 4 ), 4, 'Testing store()' );
 
-is_deeply( $rh, { 1 => 2, 3 => 4 }, 'Testing after store()' );
+is_deeply( $rh, rh( 1 => 2, 3 => 4 ), 'Testing after store()' );
 
 is_deeply(
 	rh( 1 => 2, 3 => 4, 5 => 6 )->take(2),
-	[ [ 1, 2 ], [ 3, 4 ] ],
+	ra( [ 1, 2 ], [ 3, 4 ] ),
 	'Testing take()'
 );
 
@@ -702,13 +703,13 @@ is_deeply(
 			$key <= 3;
 		}
 	),
-	[ [ 1, 2 ], [ 3, 4 ] ],
+	ra( [ 1, 2 ], [ 3, 4 ] ),
 	'Testing take_while()'
 );
 
 is_deeply(
 	rh( 1 => 2, 'a' => 'b' )->to_a,
-	[ [ 1, 2 ], [ 'a', 'b' ] ],
+	ra( [ 1, 2 ], [ 'a', 'b' ] ),
 	'Testing to_a()'
 );
 
@@ -728,6 +729,6 @@ is(
 
 is_deeply(
 	rh( 1 => [ 2, 3 ], 4 => [ 5, 6 ], 7 => 8 )->zip( [ 9, 10 ] ),
-	[ [ [ 1, [ 2, 3 ] ], 9 ], [ [ 4, [ 5, 6 ] ], 10 ], [ [ 7, 8 ], undef ] ],
+	ra( [ [ 1, [ 2, 3 ] ], 9 ], [ [ 4, [ 5, 6 ] ], 10 ], [ [ 7, 8 ], undef ] ),
 	'Testing zip()'
 );

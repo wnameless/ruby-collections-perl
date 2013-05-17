@@ -17,7 +17,10 @@ use overload (
 	'|'  => \&union,
 	'<<' => \&double_left_arrows,
 	'==' => \&eql,
-	'eq' => \&eql
+	'eq' => \&eql,
+	'!=' => \&not_eql,
+	'ne' => \&not_eql,
+	'""' => \&to_s
 );
 
 =item add()
@@ -653,6 +656,13 @@ sub eql {
 	}
 
 	return 1;
+}
+
+sub not_eql {
+	my ( $self, $other ) = @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	return $self->eql($other) == 0 ? 1 : 0;
 }
 
 sub fetch {
@@ -2133,7 +2143,8 @@ sub union {
 }
 
 if ( __FILE__ eq $0 ) {
-	p ra( 1, 2, 3 )->combination(3, sub {});
+	my $ref = [ 1, 2, 3, 4, 5, 11 ];
+	p ra($ref)->map( sub { $_[0] * 2 } )->minmax;
 }
 
 1;

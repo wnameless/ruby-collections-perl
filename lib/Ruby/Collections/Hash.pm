@@ -8,7 +8,13 @@ use FindBin;
 use lib "$FindBin::Bin/../../../lib";
 use Ruby::Collections::OrderedHash;
 use Ruby::Collections;
-use overload ( '==' => \&eql, 'eq' => \&eql );
+use overload (
+	'==' => \&eql,
+	'eq' => \&eql,
+	'!=' => \&not_eql,
+	'ne' => \&not_eql,
+	'""' => \&to_s
+);
 
 sub TIEHASH {
 	my $class = shift;
@@ -525,6 +531,13 @@ sub eql {
 	}
 
 	return 1;
+}
+
+sub not_eql {
+	my ( $self, $other ) = @_;
+	ref($self) eq __PACKAGE__ or die;
+
+	return $self->eql($other) == 0 ? 1 : 0;
 }
 
 =item fetch()
