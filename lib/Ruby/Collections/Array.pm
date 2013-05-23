@@ -391,6 +391,15 @@ sub count {
 	return scalar( @{$self} );
 }
 
+=item cycle()
+  Calls the block for each element n times.
+  It runs forever, if n is not given.
+  
+  ra(1, 2, 3)->cycle(2 , sub { print $_[0] + 1 + ", " })  # print  "2, 3, 4, 2, 3, 4, "
+  
+  ra(1, 2, 3)->cycle(sub { print $_[0] + 1 + ", " })  # print  "2, 3, 4, 2, 3, 4, .... forever
+=cut
+
 sub cycle {
 	my ( $self, $n_or_block, $block_or_n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -413,6 +422,12 @@ sub cycle {
 	}
 }
 
+=item delete()
+  Delete all the items in self if equal to the given value, and return it.
+  
+  ra(1, 3, 5)->delete(3); #return 3
+=cut
+
 sub delete {
 	my ( $self, $target, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -430,6 +445,12 @@ sub delete {
 		return $target;
 	}
 }
+
+=item delete_at()
+  Delete the element at the given index, and return it.
+  
+  ra(1, 2, 3)->delete_at(2); #return 3
+=cut 
 
 sub delete_at {
 	my ( $self, $index ) = @_;
@@ -453,6 +474,12 @@ sub delete_at {
 	}
 }
 
+=item delete_if()
+  Deletes every elements of self if the block evaluates to true.
+  
+  ra(1, 2, 3)->delete_if ( sub { |e| e > 2}); #return ra(1, 2)
+=cut
+
 sub delete_if {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -461,6 +488,12 @@ sub delete_if {
 
 	return $self;
 }
+
+=item drop()
+  Drop first n elements in array and return rest elements in a new array.
+  
+  ra(1, 3, 5, 7, 9)->drop(3); #return ra(7, 9)
+=cut
 
 sub drop {
 	my ( $self, $n ) = @_;

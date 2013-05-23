@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 32;
+use Test::More tests => 37;
 use Ruby::Collections;
 
 is_deeply(
@@ -123,5 +123,19 @@ is_deeply(
 	'Testing concat()'
 );
 
-my $ra = ra( 1, 2, 3 );
-is_deeply( $ra->count(), 3, 'Testing count()' );
+is( ra( 1, 2, 3 )->count, 3, 'Testing count()' );
+
+my $ra = ra;
+ra( 1, 2, 3 )->cycle( 2, sub { $ra << $_[0] + 1 } );
+is_deeply( $ra, ra( 2, 3, 4, 2, 3, 4 ), 'Testing cycle()' );
+
+is( ra( 1, 3, 5 )->delete(3), 3, 'Testing delete()' );
+
+is( ra(1, 2, 3)->delete_at(2), 3, 'Testing delete_at()' );
+
+my $ra = ra(1, 2, 3);
+$ra->delete_if( sub { $_[0] > 2});
+is_deeply($ra, ra(1, 2), 'Testing delete_if()');
+
+my $newra = ra(1, 3, 5, 7, 9)->drop(3);
+is_deeply($newra, ra(7, 9), 'Testing drop()');
