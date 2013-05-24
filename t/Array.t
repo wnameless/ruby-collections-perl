@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 37;
+use Test::More tests => 39;
 use Ruby::Collections;
 
 is_deeply(
@@ -124,6 +124,8 @@ is_deeply(
 );
 
 is( ra( 1, 2, 3 )->count, 3, 'Testing count()' );
+is( ra(1, 2, 2)->count(2), 2, 'Testing count()' );
+is( ra(1, 2, 3)->count( sub { $_[0] > 0 } ), 3 , 'Testing count()');
 
 my $ra = ra;
 ra( 1, 2, 3 )->cycle( 2, sub { $ra << $_[0] + 1 } );

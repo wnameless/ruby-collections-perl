@@ -361,6 +361,8 @@ sub concat {
   Return the amount of elements
   
   ra(1, 2, 3)->count() #return 3 
+  ra(1, 2, 2)->count(2) #return 2
+  ra(1, 2, 3)->count( sub { $_[0] > 0 } ) #return 3
 =cut
 
 sub count {
