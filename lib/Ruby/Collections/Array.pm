@@ -515,6 +515,13 @@ sub drop {
 	return $new_ary;
 }
 
+=item drop_while
+  Drop the elememts up to, but not including, the first element which the block returns false,
+  and return the rest elements as a new array.
+  
+  ra(1, 2, 3, 4, 5, 1, 4)->drop_while( sub { $_[0] < 2 } ); #retrun ra( 2, 3, 4, 5, 1, 4 )
+=cut
+
 sub drop_while {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -522,7 +529,7 @@ sub drop_while {
 	my $cut_point = undef;
 	my $new_ary = tie my @new_ary, 'Ruby::Collections::Array';
 	for my $item ( @{$self} ) {
-		if ( $block->($item) || $cut_point ) {
+		if ( ( not $block->($item) ) || $cut_point ) {
 			$cut_point = 1;
 			push( @new_ary, $item );
 		}
@@ -530,6 +537,12 @@ sub drop_while {
 
 	return $new_ary;
 }
+
+=item each()
+  Passing each element in self as a parameter to the call block.
+  
+  ra(1, 2, 3)->each(sub { print $_[0] }); #return ra(1, 2, 3)
+=cut
 
 sub each {
 	my ( $self, $block ) = @_;
@@ -541,6 +554,10 @@ sub each {
 
 	return $self;
 }
+
+=item each_cons()
+  
+=cut
 
 sub each_cons {
 	my ( $self, $n, $block ) = @_;
@@ -572,6 +589,10 @@ sub each_cons {
 	}
 }
 
+=item each_entry()
+
+=cut
+
 sub each_entry {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -585,6 +606,12 @@ sub each_entry {
 	return $self;
 }
 
+=item each_index
+  Passing the index of each element to the block.
+  
+  ra(1, 3, 5, 7)->each_index( sub { print $_[0] } ); # not correct!!
+=cut
+
 sub each_index {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -595,6 +622,10 @@ sub each_index {
 
 	return $self;
 }
+
+=item each_slice
+  
+=cut
 
 sub each_slice {
 	my ( $self, $n, $block ) = @_;

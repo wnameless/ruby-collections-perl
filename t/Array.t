@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 39;
+use Test::More tests => 42;
 use Ruby::Collections;
 
 is_deeply(
@@ -123,9 +123,9 @@ is_deeply(
 	'Testing concat()'
 );
 
-is( ra( 1, 2, 3 )->count, 3, 'Testing count()' );
-is( ra(1, 2, 2)->count(2), 2, 'Testing count()' );
-is( ra(1, 2, 3)->count( sub { $_[0] > 0 } ), 3 , 'Testing count()');
+is( ra( 1, 2, 3 )->count,    3, 'Testing count()' );
+is( ra( 1, 2, 2 )->count(2), 2, 'Testing count()' );
+is( ra( 1, 2, 3 )->count( sub { $_[0] > 0 } ), 3, 'Testing count()' );
 
 my $ra = ra;
 ra( 1, 2, 3 )->cycle( 2, sub { $ra << $_[0] + 1 } );
@@ -133,11 +133,32 @@ is_deeply( $ra, ra( 2, 3, 4, 2, 3, 4 ), 'Testing cycle()' );
 
 is( ra( 1, 3, 5 )->delete(3), 3, 'Testing delete()' );
 
-is( ra(1, 2, 3)->delete_at(2), 3, 'Testing delete_at()' );
+is( ra( 1, 2, 3 )->delete_at(2), 3, 'Testing delete_at()' );
 
-my $ra = ra(1, 2, 3);
-$ra->delete_if( sub { $_[0] > 2});
-is_deeply($ra, ra(1, 2), 'Testing delete_if()');
+my $ra = ra( 1, 2, 3 );
+$ra->delete_if( sub { $_[0] > 2 } );
+is_deeply( $ra, ra( 1, 2 ), 'Testing delete_if()' );
 
-my $newra = ra(1, 3, 5, 7, 9)->drop(3);
-is_deeply($newra, ra(7, 9), 'Testing drop()');
+my $newra = ra( 1, 3, 5, 7, 9 )->drop(3);
+is_deeply( $newra, ra( 7, 9 ), 'Testing drop()' );
+
+my $newra = ra( 1, 2, 3, 4, 5, 1, 4 )->drop_while( sub { $_[0] < 2 } );
+is_deeply( $newra, ra( 2, 3, 4, 5, 1, 4 ), 'Testing drop_while()' );
+
+stdout_is(
+	sub {
+		ra( 1, 2, 3 )->each( sub { print $_[0] } );
+	},
+	'123',
+	'Testing each()'
+);
+
+=head
+=cut
+
+=head
+=cut
+
+my $newra = ra;
+ra( 1, 3, 5, 7 )->each_index( sub { $newra << $_[0] } );
+is_deeply( $newra, ra( 0, 1, 2, 3 ), 'Testing each_index' );
