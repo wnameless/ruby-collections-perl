@@ -240,3 +240,38 @@ is( ra( 1, 2, 3, 4 )->inject( sub { $_[0] + $_[1] } ), 10, 'Testing inject' );
 is( ra( 1, 2, 3, 4 )->first, 1, 'Testing first' );
 
 is( ra( 1, 2, 3, 4 )->first(2), ra( 1, 2 ), 'Testing first' );
+
+is_deeply(
+	ra( ra( 'a', 'b', 'c' ), ra( 'd', 'e' ) )
+	  ->flat_map( sub { $_[0] + ra('f') } ),
+	ra( 'a', 'b', 'c', 'f', 'd', 'e', 'f' ),
+	'Testing flat_map'
+);
+
+is_deeply(
+	ra( ra( 'a', 'b' ), ra( 'd', 'e' ) )->flatten,
+	ra( 'a', 'b', 'd', 'e' ),
+	'Testing fltten'
+);
+
+=cut
+is_deeply(
+	ra( ra( 'a', 'b' ), ra( 'd', 'e', ra( 'f', 'g' ) ) )->recursive_flatten(1),
+	ra(
+		 ra( 'a', 'b' ), ra( 'd', 'e', 'f', 'g' )), 'Testing recursive_flatten '
+	);
+=cut
+
+is_deeply(
+	ra( 'abbc', 'qubbn', 'accd' )->grep('bb'),
+	ra( 'abbc', 'qubbn' ),
+	'Testing grep()'
+);
+
+=cut
+is_deeply(
+	ra( 'abbc',  'qubbn', 'accd' )->grep( 'bb', sub { $_[0] + 'l' } ),
+	ra( 'abbcl', 'qubbnl' ),
+	'Testing grep()'
+);
+=cut

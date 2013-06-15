@@ -1027,6 +1027,12 @@ sub first {
 	}
 }
 
+=item flat_map()
+  Return a new array with the concatenated result of each element's running block.
+
+  ra(ra('a', 'b', 'c'), ra('d', 'e'))->flat_map(sub {$_[0] + ra('f')}) #return ra('a', 'b', 'c', 'f', 'd', 'e', 'f');
+=cut
+
 sub flat_map {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1053,6 +1059,12 @@ sub flat_map {
 
 *collect_concat = \&flat_map;
 
+=item flatten
+  Return a new array after flattening self into one-dimension.
+  
+ ra(ra('a', 'b'), ra('d', 'e'))->flatten #return ra('a', 'b', 'd', 'e');
+=cut
+
 sub flatten {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1072,6 +1084,10 @@ sub flatten {
 
 	return $new_ary;
 }
+
+=item recursive_flatten
+  
+=cut
 
 sub recursive_flatten {
 	caller eq __PACKAGE__ or die;
@@ -1093,6 +1109,9 @@ sub recursive_flatten {
 	return $new_ary;
 }
 
+=item flattenEx()
+=cut
+
 sub flattenEx {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1113,6 +1132,14 @@ sub flattenEx {
 
 	return $self;
 }
+
+=item grep()
+  Return all the elements as an array which matches the given pattern.
+  If a block is supplied, each matching element will be passed to the block, and the result will be collect in an array.
+  
+  ra('abbc', 'qubbn', 'accd')->grep('bb') #return ra('abbc', 'qubbn')
+  ra('abbc', 'qubbn', 'accd')->grep('bb', sub { $_[0] + 'l'}) #return ra('abbcl', 'qubbnl')
+=cut
 
 sub grep {
 	my ( $self, $pattern, $block ) = @_;
