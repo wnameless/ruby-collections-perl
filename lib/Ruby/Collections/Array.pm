@@ -540,6 +540,7 @@ sub drop_while {
 
 =item each()
   Passing each element in self as a parameter to the call block.
+  Alias: each_entry()
   
   ra(1, 2, 3)->each(sub { print $_[0] }); #return ra(1, 2, 3)
 =cut
@@ -556,7 +557,9 @@ sub each {
 }
 
 =item each_cons()
+  Group each element with (n-1) following members in to an new array until the last element included.
   
+  ra(1, 2, 3, 4, 5, 6, 7, 8)->each_cons(5); #return ra(ra(1, 2, 3, 4, 5), ra(2, 3, 4, 5, 6), ra(3, 4, 5, 6, 7), ra(4, 5, 6, 7, 8))
 =cut
 
 sub each_cons {
@@ -590,7 +593,10 @@ sub each_cons {
 }
 
 =item each_entry()
-
+  Passing each element in self as a parameter to the call block.
+  Alias: each()
+  
+  ra(1, 2, 3)->each_entry(sub { print $_[0] }); #return ra(1, 2, 3)
 =cut
 
 sub each_entry {
@@ -609,7 +615,7 @@ sub each_entry {
 =item each_index
   Passing the index of each element to the block.
   
-  ra(1, 3, 5, 7)->each_index( sub { print $_[0] } ); # not correct!!
+  ra(1, 3, 5, 7)->each_index( sub { print $_[0] } ); # print 0123
 =cut
 
 sub each_index {
@@ -624,7 +630,9 @@ sub each_index {
 }
 
 =item each_slice
+  Group element with (n-1)  members in to an new array until the last element included.
   
+  ra(1, 2, 3, 4, 5)->each_slice(3); #return ra(ra(1, 2, 3), ra(4, 5));
 =cut
 
 sub each_slice {
@@ -665,6 +673,12 @@ sub each_slice {
 	}
 }
 
+=item each_with_index
+  For each item calls block with itself and it's index.
+  
+  ra(1, 2, 3)->each_with_index(sub { $_[1] }); #return ra(0, 1, 2)
+=cut
+
 sub each_with_index {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -677,6 +691,13 @@ sub each_with_index {
 
 	return $self;
 }
+
+=item each_with_object
+  Passing each element with an object in a block, return the object in the end.
+  
+  ra( 1, 2, 3 )->each_with_object( ra, sub { $_[1] << $_[0]**2 } ); #return ra( 1, 4, 9 )
+  
+=cut
 
 sub each_with_object {
 	my ( $self, $object, $block ) = @_;
@@ -691,6 +712,12 @@ sub each_with_object {
 	return $object;
 }
 
+=item is_empty
+  Return true if the array don't contain any element.
+  
+  ra(1, 2, 3)->is_empty() #return 0;
+=cut
+
 sub is_empty {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -702,6 +729,12 @@ sub is_empty {
 		return 0;
 	}
 }
+
+=item eql
+  Return true if these 2 arrays have same order and content.
+  
+  ra(1, 2, 3)->equal(ra(4, 5, 6)) #return 0
+=cut
 
 sub eql {
 	my ( $self, $other ) = @_;
@@ -724,12 +757,30 @@ sub eql {
 	return 1;
 }
 
+=item not_eql
+  Return true if these 2 arrays have different order and content.
+  
+  ra(1, 2, 3)->not_equal(ra(4, 5, 6)) #return 1
+=cut
+
 sub not_eql {
 	my ( $self, $other ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->eql($other) == 0 ? 1 : 0;
 }
+
+=item fetch()
+  Retrun the element of array from given index.
+  If the given index is out of the scalar of array, it will be seen as an IndexError exception, 
+  unless a second argument is given, and which will be a default value.
+  If a block is given, it will be executed when an invalid index is given.
+  If the index is a negative value, the last element of array will be return.
+  
+  ra(1, 2, 3)->fetch(2) #return 3;
+  ra(1, 2, 3)->fetch(5, 6) #return 6;
+  ra(1, 2, 3)->fetch(-1) #return 3;
+=cut
 
 sub fetch {
 	my ( $self, $index, $default_value_or_block ) = @_;
@@ -754,6 +805,20 @@ sub fetch {
 	}
 	return $self->at($index);
 }
+
+=item fill
+  Replace all the elements in array by the given value.
+  If the second and third(n) value are given in the same time, means the array will be replace by the given value
+  from the second value of index to the following n elements.
+  If a block is given, it will pass all or given amount of indexs to the block and return the result as an array.
+  
+  ra(1, 2, 3)->fill(4) #return ra(4, 4, 4);
+  ra(1, 2, 3, 4)->fill(sub {$_[0]}) #return ra(0, 1, 2, 3);
+  ra(1, 2, 3, 4)->fill(1, sub { 11 }) #return ra(1, 11, 11, 11);
+  ra(1, 2, 3, 4)->fill('ab', 1) #return ra(1, 'ab', 'ab', 'ab');
+  ra(1, 2, 3, 4)->fill(1, 2, sub { 11 }) #return ra(1, 11, 11, 4);
+  ra(1, 2, 3, 4)->fill('ab', 1, 2) #return ra(1, 'ab', 'ab', 4);
+=cut
 
 sub fill {
 	if ( @_ == 2 ) {
@@ -823,6 +888,12 @@ sub fill {
 	}
 }
 
+=item find
+  Passing each element to the block, and return the first element if block is true, else return undef.
+  
+  ra('a', 'b', 'c', 'b')->find(sub { $_[0] eq 'b' }) return b;
+=cut
+
 sub find {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -837,6 +908,14 @@ sub find {
 }
 
 *detect = \&find;
+
+=item find_index
+  Return the first index of the given value in the array.
+  If a block instead of an argument, then return the first index of the given value in the array.
+  
+  ra('a', 'b', 'c', 'b')->find_index('b') #return 1;
+  ra('a', 'b', 'c', 'b')->find_index( sub { if($_[0] eq 'b')}) #return 1;
+=cut
 
 sub find_index {
 	my ( $self, $obj_or_block ) = @_;
@@ -856,6 +935,12 @@ sub find_index {
 
 	return undef;
 }
+
+=item index
+  Retrun the first index of given object in array.
+  
+  ra('a', 'b', 'c', 'c')->index('c') #return 2; 
+=cut
 
 sub index {
 	my ( $self, $obj_or_block ) = @_;
@@ -878,6 +963,12 @@ sub index {
 
 	return undef;
 }
+
+=item inject
+  Combines all elements by applying a binary operation, ex. a block, method or operator.
+  
+  ra(1, 2, 3, 4)->inject(sub { $_[0] + $_[1] }) #return 10;
+=cut
 
 sub inject {
 	my $self = shift @_;
@@ -908,24 +999,15 @@ sub inject {
 	}
 }
 
-sub reduce {
-	my $self = shift @_;
-	ref($self) eq __PACKAGE__ or die;
+*reduce = \&inject;
 
-	if ( @_ == 1 ) {
-		my $block = shift @_;
-
-		return $self->inject($block);
-	}
-	elsif ( @_ == 2 ) {
-		my ( $init, $block ) = @_;
-
-		return $self->inject( $init, $block );
-	}
-	else {
-		die 'ArgumentError: wrong number of arguments (' . @_ . ' for 0..2)';
-	}
-}
+=item first
+  Return the first or first n elements of the array.
+  Return the first n elements of the array as a new array.
+  
+  ra(1, 2, 3 ,4)->first #return 1
+  ra(1, 2, 3 ,4)->first(2) #return ra(1, 2)
+=cut
 
 sub first {
 	my ( $self, $n ) = @_;

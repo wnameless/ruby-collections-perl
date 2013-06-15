@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 42;
+use Test::More tests => 67;
 use Ruby::Collections;
 
 is_deeply(
@@ -153,12 +153,90 @@ stdout_is(
 	'Testing each()'
 );
 
-=head
-=cut
+is_deeply(
+	ra( 1, 2, 3, 4 )->each_cons(2),
+	ra( ra( 1, 2 ), ra( 2, 3 ), ra( 3, 4 ) ),
+	'Testing each_cons'
+);
 
-=head
-=cut
+is_deeply(
+	ra( 1, 2, 3 )->each_entry( sub { print $_[0] } ),
+	ra( 1, 2, 3 ),
+	'Testing each_entry()'
+);
+
+is_deeply(
+	ra( 1, 2, 3, 4, 5 )->each_slice(3),
+	ra( ra( 1, 2, 3 ), ra( 4, 5 ) ),
+	'Testing each_slice'
+);
 
 my $newra = ra;
 ra( 1, 3, 5, 7 )->each_index( sub { $newra << $_[0] } );
 is_deeply( $newra, ra( 0, 1, 2, 3 ), 'Testing each_index' );
+
+my $newra = ra;
+ra( 1, 2, 3 )->each_with_index( sub { $newra << $_[1] } );
+is_deeply( $newra, ra( 0, 1, 2 ), 'Testing each_with_index' );
+
+is_deeply(
+	ra( 1, 2, 3 )->each_with_object( ra, sub { $_[1] << $_[0]**2 } ),
+	ra( 1, 4, 9 ),
+	'Testing each_with_object'
+);
+
+is( ra( 1, 2, 3 )->is_empty(), 0, 'Testing is_empty()' );
+
+is( ra( 1, 2, 3 )->eql( ra( 4, 5, 6 ) ), 0, 'Testing equal' );
+
+is( ra( 1, 2, 3 )->not_eql( ra( 4, 5, 6 ) ), 1, 'Testing not_equal' );
+
+is( ra( 1, 2, 3 )->fetch(2), 3, 'Testing fetch()' );
+is( ra( 1, 2, 3 )->fetch( 5, 6 ), 6, 'Testing fetch()' );
+is( ra( 1, 2, 3 )->fetch(-1), 3, 'Testing fetch()' );
+dies_ok { ra( 1, 2, 3 )->fetch(5) } 'Testing fetch()';
+
+is_deeply( ra( 1, 2, 3 )->fill(4), ra( 4, 4, 4 ), 'Testing fill' );
+is_deeply(
+	ra( 1, 2, 3, 4, 5 )->fill( 8, 2, 3 ),
+	ra( 1, 2, 8, 8, 8 ),
+	'Testing fill'
+);
+
+is_deeply(
+	ra( 1, 2, 3, 4 )->fill( sub { $_[0] } ),
+	ra( 0, 1, 2, 3 ),
+	'Testing fill'
+);
+
+is_deeply(
+	ra( 1, 2, 3, 4 )->fill( -2, sub { $_[0] + 1 } ),
+	ra( 1, 2, 3, 4 ),
+	'Testing fill'
+);
+is_deeply(
+	ra( 1, 2, 3, 4 )->fill( 1, 2, sub { $_[0] + 2 } ),
+	ra( 1, 3, 4, 4 ),
+	'Testing fill'
+);
+is_deeply(
+	ra( 1, 2,    3,    4 )->fill( 'ab', 1 ),
+	ra( 1, 'ab', 'ab', 'ab' ),
+	'Testing fill'
+);
+
+is( ra( 'a', 'b', 'c', 'b' )->find( sub { $_[0] eq 'b' } ),
+	'b', 'Testing find' );
+
+is( ra( 'a', 'b', 'c', 'b' )->find_index('b'), 1, 'Testing find_index' );
+
+is( ra( 'a', 'b', 'c', 'b' )->find_index( sub { $_[0] eq 'b' } ),
+	1, 'Testing find_index' );
+
+is( ra( 'a', 'b', 'c', 'c' )->index('c'), 2, 'Testing index' );
+
+is( ra( 1, 2, 3, 4 )->inject( sub { $_[0] + $_[1] } ), 10, 'Testing inject' );
+
+is( ra( 1, 2, 3, 4 )->first, 1, 'Testing first' );
+
+is( ra( 1, 2, 3, 4 )->first(2), ra( 1, 2 ), 'Testing first' );
