@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 67;
+use Test::More tests => 75;
 use Ruby::Collections;
 
 is_deeply(
@@ -275,3 +275,41 @@ is_deeply(
 	'Testing grep()'
 );
 =cut
+
+is_deeply(
+	ra( 1, 2, 3, 4 )->group_by( sub { $_[0] % 3 } ),
+	rh( 1 => [ 1, 4 ], 2 => [2], 0 => [3] ),
+	'Testing group_by()'
+);
+
+=cut
+is( ra( 1, 3, 5, 7, 9 )->include(9), true, 'Testing include()' );
+=cut
+
+is_deeply(
+	ra( 1, 4, 6 )->replace( ra( 2, 5 ) ),
+	ra( 2, 5 ),
+	'Testing replace()'
+);
+
+is_deeply(
+	ra( 1, 2, 3, 4 )->insert( 2, 5 ),
+	ra( 1, 2, 5, 3,              4 ),
+	'Testing insert()'
+);
+
+=cut
+is_deeply(
+	ra( 1, 2, 3, 4 )->insert( -2, 5 ),
+	ra( 1, 2, 3, 5, 4 ),
+	'Testing insert()'
+);
+=cut
+
+=cut
+is( ra( 1, 2, 3 )->inspect(), '[1, 2, 3]', 'Testing inspect()' );
+=cut
+
+is( ra( 1, 2, 3 )->to_s(), '[1, 2, 3]', 'Testing to_s()' );
+
+is(ra('a', 'b', 'c')->join("/"), 'a/b/c', 'Testing join()');

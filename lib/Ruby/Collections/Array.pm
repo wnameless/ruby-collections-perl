@@ -1160,6 +1160,12 @@ sub grep {
 	return $new_ary;
 }
 
+=item group_by
+  Return a hash which key is the block result and the values are arrays of elements which related with the key.
+  
+  ra(1, 2, 3, 4)->group_by( sub { $_[0]%3 }) #return rh( 1=>[1, 4], 2=>[2], 0=>[3]);
+=cut
+
 sub group_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1179,6 +1185,12 @@ sub group_by {
 	return $new_hash;
 }
 
+=iten include()
+  Return true if any element equals the given object.
+  
+  ra(1, 3, 5, 7, 9)->include(9) #return true #
+=cut
+
 sub include {
 	my ( $self, $obj ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1193,6 +1205,12 @@ sub include {
 }
 
 *has_member = \&include;
+
+=item replace()
+  Replace all elements of self by the other elements of given array.
+  
+  ra(1, 4, 6)->replace(ra(2, 5)) #return ra(2, 5);
+=cut
 
 sub replace {
 	my ( $self, $other_ary ) = @_;
@@ -1209,6 +1227,13 @@ sub replace {
 
 	return $self;
 }
+
+=item insert()
+  Insert the given value at the given index.
+  
+  ra(1, 2, 3, 4)->insert(2, 5) #return ra(1, 2, 5, 3, 4);
+  ra(1, 2, 3 ,4)->insert(-2, 5) #return ra(1, 2, 3, 5, 4);#
+=cut
 
 sub insert {
 	my $self  = shift(@_);
@@ -1233,6 +1258,12 @@ sub insert {
 	return $self;
 }
 
+=item inspect()
+  Return the object as string.
+  
+  ra(1, 2, 3)->inspect() #return 'ra(1, 2, 3)'; #
+=cut
+
 sub inspect {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1240,12 +1271,22 @@ sub inspect {
 	return p_array $self;
 }
 
+=item to_s()
+  ra(1, 2, 3)->inspect() #return 'ra(1, 2, 3)';
+=cut
+
 sub to_s {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->inspect;
 }
+
+=item join()
+  Return a string created by converting each element of array to a string, merged by the given separator.
+  
+  ra('a', 'b', 'c')->join("/") #return 'a/b/c';
+=cut
 
 sub join {
 	my ( $self, $separator ) = @_;
