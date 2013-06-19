@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 75;
+use Test::More tests => 86;
 use Ruby::Collections;
 
 is_deeply(
@@ -312,4 +312,22 @@ is( ra( 1, 2, 3 )->inspect(), '[1, 2, 3]', 'Testing inspect()' );
 
 is( ra( 1, 2, 3 )->to_s(), '[1, 2, 3]', 'Testing to_s()' );
 
-is(ra('a', 'b', 'c')->join("/"), 'a/b/c', 'Testing join()');
+is( ra( 'a', 'b', 'c' )->join("/"), 'a/b/c', 'Testing join()' );
+
+is_deeply( ra( 1, 2, 3 )->keep_if( sub { $_[0] > 2 } ), ra(3), 'Testing keep_if()' );
+
+is(ra(1, 2, 3)->last, 3, 'Testing last()');
+is_deeply(ra(1, 2, 3)->last(2), ra(2, 3), 'Testing last()');
+
+is(ra(1, 2, 3)->length(), 3, 'Testing length()');
+is(ra()->length(), 0, 'Testing length()');
+
+is(ra(1, 2, 3)->max(), 3, 'Testing max()');
+is(ra(1, 2, 3)->max(sub {$_[0] <=> $_[1]}), 3, 'Testing max()');#
+
+is(ra('avv', 'aldivj', 'kgml')->max_by(sub {length($_[0])}), 'aldivj', 'Testing max_by');
+
+is(ra(1, 2, 3)->min(), 1, 'Testing max()');
+is(ra(1, 2, 3)->min(sub {$_[0] <=> $_[1]}), 1, 'Testing max()');#
+
+is(ra('kv', 'aldivj', 'kgml')->min_by(sub {length($_[0])}), 'kv', 'Testing min_by()');

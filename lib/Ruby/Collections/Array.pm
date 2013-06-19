@@ -1300,6 +1300,11 @@ sub join {
 	}
 }
 
+=item keep_if()
+  Delete the element of self for which the given block evaluates to false.
+  
+  ra(1, 2, 3)->keep_if(sub {$_[0] > 2}) #return ra(3);
+=cut
 sub keep_if {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1308,6 +1313,13 @@ sub keep_if {
 
 	return $self;
 }
+
+=item last()
+  Return the last or last n elements of self.
+  
+  ra(1, 2, 3)->last #return 3;
+  ra(1, 2, 3)->last(2) #return ra(2, 3);
+=cut
 
 sub last {
 	my ( $self, $n ) = @_;
@@ -1330,6 +1342,12 @@ sub last {
 	}
 }
 
+=item length()
+  Retrun the number of elements of self.
+  
+  ra(1, 2, 3)->length() #return 3;
+  ra()->length() #return 0;
+=cut
 sub length {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1378,6 +1396,14 @@ sub mapEx {
 
 *collectEx = \&mapEx;
 
+=item max()
+  Return the max value of object.
+  If a block is given, 
+  
+  ra(1, 2, 3)->max() #return 3;
+  ra(1, 2, 3)->max(sub {$_[0] <=> $_[1]}) #return 3;
+=cut
+
 sub max {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1390,12 +1416,26 @@ sub max {
 	}
 }
 
+=item max_by()
+  Return the object that gives the maximum value from the given block.
+  
+  ra('avv', 'aldivj', 'kgml')->max_by(sub {length($_[0])}) #return 'aldivj';
+=cut
+
 sub max_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self->sort_by($block)->last;
 }
+
+=item min()
+  Return the min value of object.
+  If a block is given, 
+  
+  ra(1, 2, 3)->min() #return 1;
+  ra(1, 2, 3)->min(sub {$_[0] <=> $_[1]}) #return 1;
+=cut
 
 sub min {
 	my ( $self, $block ) = @_;
@@ -1408,6 +1448,12 @@ sub min {
 		return $self->sort->first;
 	}
 }
+
+=item min_by()
+  Return the object that gives the minimum value from the given block.
+  
+  ra('kv', 'aldivj', 'kgml')->min_by(sub {length($_[0])}) #return 'kv';
+=cut
 
 sub min_by {
 	my ( $self, $block ) = @_;
