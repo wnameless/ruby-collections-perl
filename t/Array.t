@@ -331,3 +331,20 @@ is(ra(1, 2, 3)->min(), 1, 'Testing max()');
 is(ra(1, 2, 3)->min(sub {$_[0] <=> $_[1]}), 1, 'Testing max()');#
 
 is(ra('kv', 'aldivj', 'kgml')->min_by(sub {length($_[0])}), 'kv', 'Testing min_by()');
+
+is_deeply(ra(1, 2, 3)->minmax, ra(1, 3), 'Testing minmax()');
+is_deeply(ra('bbb', 'foekvv', 'rd')->minmax(sub{length($_[0]) <=> length($_[1])}), ra('rd', 'foekvv'), 'Testing minmax()');
+
+is_deeply(ra('heard', 'see', 'thinking')->minmax_by(sub {length($_[0])}), ra('see', 'thinking'), 'Testing minmax_by()');
+
+is(ra(99, 43, 65)->has_none(sub {$_[0] < 50}), 0, 'Testing has_none()');# not turn false
+is(ra()->has_none, 1, 'Testing has_none()');# not return true
+
+is(ra(99, 43, 65)->has_one(sub {$_[0] < 50}), 1, 'Testing has_one()');# not turn true
+is(ra(100)->has_one, 1, 'Testing has_one()');# not return true
+
+is_deeply(ra(1, 2, 3, 4, 5, 6, 7)->partition(sub {$_[0] % 2 == 0}), ra(ra(2, 4, 6), ra(1, 3, 5, 7)), 'Testing partition()');
+
+=cut
+is_deeply(ra(1, 2)->permutation, ra(ra(1, 2), ra(2, 1)), 'Testing permutation()');
+=cut

@@ -1462,6 +1462,13 @@ sub min_by {
 	return $self->sort_by($block)->first;
 }
 
+=item minmax()
+  Return an array which contains the minimum and maximum value.
+  
+  ra(1, 2, 3)->minmax #return ra(1, 3);
+  ra('bbb', 'foekvv', 'rd')->minmax(sub{length($_[0]) <=> length($_[1])}) #return ra('rd', 'foekvv'); 
+=cut
+
 sub minmax {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1482,6 +1489,12 @@ sub minmax {
 	}
 }
 
+=item minmax_by()
+  Return an array which contains the objects that correspond to the minimum and maximum value respectively from the given block.
+  
+  ra('heard', 'see', 'thinking')->minmax_by(sub {length($_[0])}) #return ra('see', 'thinking');
+=cut
+
 sub minmax_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1492,6 +1505,14 @@ sub minmax_by {
 	$new_ary->push( $sorted_ary->last );
 	return $new_ary;
 }
+
+=item has_none()
+  Pass each element to the given block, this method returns true if the block never returns true for all elements.
+  If the block is not given, this method returns true if all the elements are flase.
+  
+  ra(99, 43, 65)->has_none(sub {$_[0] < 50}) #return 0;
+  ra()->has_none #return 1;
+=cut
 
 sub has_none {
 	my ( $self, $block ) = @_;
@@ -1510,6 +1531,14 @@ sub has_none {
 
 	return 1;
 }
+
+=item has_one()
+  Pass each element to the given block, this method returns true if the block returns true exactly once.
+  If the block is not given, this method returns true if only one elements is true.
+  
+  ra(99, 43, 65)->has_one(sub {$_[0] < 50}) #return 1;
+  ra(100)->has_one #return 1;
+=cut
 
 sub has_one {
 	my ( $self, $block ) = @_;
@@ -1536,6 +1565,14 @@ sub has_one {
 	return $count == 1 ? 1 : 0;
 }
 
+=item partition()
+  Return an array which contains two elements.
+  The first are the objects which evaluate the block to true.
+  The second are the rest.
+  
+  ra(1, 2, 3, 4, 5, 6, 7)->partition(sub {$_[0] % 2 == 0}) #return ra(ra(2, 4, 6), ra(1, 3, 5, 7));
+=cut
+
 sub partition {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1556,6 +1593,14 @@ sub partition {
 
 	return $new_ary;
 }
+
+=item permutation()
+  If a block is given, then return self as all kind of permutations.
+  If a parameter(n) is given, and also a block, then return self as all kind of permutations in length n.
+  If a block is not given, then return 
+  
+  ra(1, 2, 3)->permutation()
+=cut
 
 sub permutation {
 	my ( $self, $n, $block ) = @_;
