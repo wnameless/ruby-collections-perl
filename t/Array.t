@@ -348,3 +348,18 @@ is_deeply(ra(1, 2, 3, 4, 5, 6, 7)->partition(sub {$_[0] % 2 == 0}), ra(ra(2, 4, 
 =cut
 is_deeply(ra(1, 2)->permutation, ra(ra(1, 2), ra(2, 1)), 'Testing permutation()');
 =cut
+
+is(ra(1, 2, 3)->pop, 3, 'Testing pop()');
+is_deeply(ra(1, 2, 3)->pop(2), ra(2, 3), 'Testing pop()');
+
+is_deeply(ra(1, 2)->product(ra(2,3)), ra(ra(1, 2), ra(1, 3), ra(2, 2), ra(2, 3)), 'Testing product()');
+
+is_deeply(ra(1, 2, 3)->push(5, 6), ra(1, 2, 3, 5, 6), 'Testing push()');
+
+=cut
+=cut
+
+is_deeply(ra(1, 2, 3)->reject(sub { $_[0] < 3 }), ra(3), 'Testing reject()');
+
+my $a = ra(1, 2, 3)->rejectEx(sub { $_[0] < 3 });
+is_deeply($a, ra(3), 'Testing rejectEx');

@@ -1653,6 +1653,14 @@ sub permutation {
 	}
 }
 
+=item pop()
+  Return the last element.
+  If a number n is given, then return the last n elements as an array.
+  
+  ra(1, 2, 3)->pop #return 3;
+  ra(1, 2, 3)->pop(2) #return ra(2, 3);
+=cut
+
 sub pop {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1670,6 +1678,13 @@ sub pop {
 		return pop( @{$self} );
 	}
 }
+
+=item product()
+  Return an array of all combinations of all arrays.
+  #block
+  
+  ra(1, 2)->product(ra(2,3)) #return ra(ra(1, 2), ra(1, 3), ra(2, 2), ra(2, 3));
+=cut
 
 sub product {
 	my ($self) = @_;
@@ -1707,6 +1722,12 @@ sub product {
 	}
 }
 
+=item push()
+  Appending the given array to self, then return it.
+  
+  ra(1, 2, 3)->push(5, 6) #return ra(1, 2, 3, 5, 6);
+=cut
+
 sub push {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1724,6 +1745,10 @@ sub double_left_arrows {
 
 	return $self;
 }
+
+=item rassoc()
+  
+=cut
 
 sub rassoc {
 	my ( $self, $target ) = @_;
@@ -1743,6 +1768,13 @@ sub rassoc {
 	return undef;
 }
 
+=item reject()
+  Return a new array contains the elements from self for which the given block is not true.
+  Alias: delete_if()
+  
+  ra(1, 2, 3)->reject(sub { $_[0] < 3 }) #return ra(3);
+=cut
+
 sub reject {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1752,6 +1784,12 @@ sub reject {
 
 	return $new_ary;
 }
+
+=item rejectEx()
+  Delete all the elements from self for which the given block is true.
+  
+  ra(1, 2, 3)->rejectEx(sub { $_[0] < 3 }) #return ra(3);
+=cut
 
 sub rejectEx {
 	my ( $self, $block ) = @_;
