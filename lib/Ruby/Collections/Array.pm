@@ -1737,6 +1737,10 @@ sub push {
 	return $self;
 }
 
+=item double_left_arrows()
+  Alias : push()
+=cut
+
 sub double_left_arrows {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1806,6 +1810,12 @@ sub rejectEx {
 	}
 }
 
+=item repeated_combination()
+  Returns the array which lists all the repeated combinations of length n of all elements from array.
+  
+  ra(1, 2, 3)->repeated_combination(2) #returns ra(ra(1, 1), ra(1, 2), ra(1, 3), ra(2, 2), ra(2, 3), ra(3, 3));
+=cut
+
 sub repeated_combination {
 	my ( $self, $n, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1855,6 +1865,10 @@ sub repeated_combination {
 	}
 }
 
+=item repeated_combination_loop()
+  
+=cut
+
 sub repeated_combination_loop {
 	caller eq __PACKAGE__ or die;
 
@@ -1870,6 +1884,9 @@ sub repeated_combination_loop {
 	} until ( "@$loop_counter" eq "@end_status" );
 	$block->($loop_counter);
 }
+
+=item increase_repeated_combination_loop_counter()
+=cut
 
 sub increase_repeated_combination_loop_counter {
 	caller eq __PACKAGE__ or die;
@@ -1892,6 +1909,12 @@ sub increase_repeated_combination_loop_counter {
 		}
 	}
 }
+
+=item repeated_permutation()
+  Returns the array which lists all the repeated permutations of length n of all elements from array.
+  
+  ra(1, 2)->repeated_permutation(2) #returns ra(ra(1, 1), ra(1, 2), ra(2, 1), ra(2, 2));
+=cut
 
 sub repeated_permutation {
 	my ( $self, $n, $block ) = @_;
@@ -1942,6 +1965,9 @@ sub repeated_permutation {
 	}
 }
 
+=item repeated_permutation_loop()
+=cut
+
 sub repeated_permutation_loop {
 	caller eq __PACKAGE__ or die;
 
@@ -1957,6 +1983,9 @@ sub repeated_permutation_loop {
 	} until ( "@$loop_counter" eq "@end_status" );
 	$block->($loop_counter);
 }
+
+=item increase_repeated_permutation_loop_counter()
+=cut
 
 sub increase_repeated_permutation_loop_counter {
 	caller eq __PACKAGE__ or die;
@@ -1980,6 +2009,12 @@ sub increase_repeated_permutation_loop_counter {
 	}
 }
 
+=item reverse()
+  Returns a new array which contains self's elements in the reverse order.
+  
+  ra(1, 2, 3)->reverse() #returns ra(3, 2, 1);
+=cut
+
 sub reverse {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1990,6 +2025,12 @@ sub reverse {
 	return $new_ary;
 }
 
+=item reverseEx()
+  Returns self where all the elements list in the reverse order.
+  
+  ra(1, 2, 3)->reverseEx() #returns ra(3, 2, 1);
+=cut
+
 sub reverseEx {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1999,6 +2040,12 @@ sub reverseEx {
 
 	return $self;
 }
+
+=item reverse_each()
+  Passing all the elements to the block, but in the reverse order.
+  
+  ra(1, 2, 3)->reverse_each(sub {$_[0]}) #returns ra(3, 2, 1);
+=cut
 
 sub reverse_each {
 	my ( $self, $block ) = @_;
@@ -2013,6 +2060,14 @@ sub reverse_each {
 
 	return $new_ary;
 }
+
+=item rindex()
+  Returns the index of last object which equal to given object.
+  If a block is given, returns the index of the last object for which the block returns true.
+  
+  ra(1, 2, 3, 2, 4)->rindex(2) #returns 3;
+  ra(1, 2, 3, 2, 4)->rindex(sub {$_[0] == 2}) #returns 3;
+=cut
 
 sub rindex {
 	my ( $self, $obj_or_block ) = @_;
@@ -2035,6 +2090,15 @@ sub rindex {
 
 	return undef;
 }
+
+=item rotate()
+  Returns a new array by rotating self, the element at given number is the first element of new array.
+  If the given number is negative, then statring from the end of self.
+  
+  ra(1, 2, 3)->rotate() #return ra(2, 3, 1);
+  ra(1, 2, 3)->rotate(2) #return ra(3, 1, 2);
+  ra(1, 2, 3)->rotate(-2) #return ra(2, 3, 1);
+=cut
 
 sub rotate {
 	my ( $self, $count ) = @_;
@@ -2059,6 +2123,10 @@ sub rotate {
 
 	return $new_ary;
 }
+
+=item rotateEx()
+  See rotate, but return self inplace.
+=cut
 
 sub rotateEx {
 	my ( $self, $count ) = @_;

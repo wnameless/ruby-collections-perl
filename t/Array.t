@@ -3,7 +3,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Test::Exception;
 use Test::Output;
-use Test::More tests => 86;
+use Test::More tests => 113;
 use Ruby::Collections;
 
 is_deeply(
@@ -363,3 +363,32 @@ is_deeply(ra(1, 2, 3)->reject(sub { $_[0] < 3 }), ra(3), 'Testing reject()');
 
 my $a = ra(1, 2, 3)->rejectEx(sub { $_[0] < 3 });
 is_deeply($a, ra(3), 'Testing rejectEx');
+
+is_deeply(ra(1, 2, 3)->repeated_combination(2), ra(ra(1, 1), ra(1, 2), ra(1, 3), ra(2, 2), ra(2, 3), ra(3, 3)), 'Testing repeated_combination()');
+
+#is_deeply(ra(1,2,3)->repeated_combination_loop(2,0,2), ra(1,2,3),'Testing repeated_combination_loop()');
+#
+is_deeply(ra(1, 2)->repeated_permutation(2), ra(ra(1, 1), ra(1, 2), ra(2, 1), ra(2, 2)), 'Testing repeated_permutation()');
+#
+#
+
+is_deeply(ra(1, 2, 3)->reverse(), ra(3, 2, 1), 'Testing reverse()');
+
+my $a = ra(1, 2, 3)->reverseEx();
+is_deeply($a, ra(3, 2, 1), 'Testing reverseEx()');
+
+is_deeply(ra(1, 2, 3)->reverse_each(sub {$_[0]}), ra(3, 2, 1), 'Testing reverse_each()');
+
+is(ra(1, 2, 3, 2, 4)->rindex(2), 3, 'Testing rindex()');
+is(ra(1, 2, 3, 2, 4)->rindex(sub {$_[0] == 2}), 3, 'Testing rindex()');
+
+is_deeply(ra(1, 2, 3)->rotate(), ra(2, 3, 1), 'Testing rotate()');
+is_deeply(ra(1, 2, 3)->rotate(2), ra(3, 1, 2), 'Testing rotate()');
+is_deeply(ra(1, 2, 3)->rotate(-2), ra(2, 3, 1), 'Testing rotate()');
+
+my $a = ra(1, 2, 3)->rotateEx();
+is_deeply($a, ra(2, 3, 1), 'Testing rotate()');
+my $b = ra(1, 2, 3)->rotateEx(2);
+is_deeply($b, ra(3, 1, 2), 'Testing rotate()');
+my $c = ra(1, 2, 3)->rotateEx(-2);
+is_deeply($c, ra(2, 3, 1), 'Testing rotate()');
