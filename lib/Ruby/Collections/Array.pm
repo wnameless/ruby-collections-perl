@@ -1110,6 +1110,9 @@ sub recursive_flatten {
 }
 
 =item flattenEx()
+  Flattens self in place.
+  
+  ra(ra('a', 'b'), ra('d', 'e'))->flattenEx #return ra('a', 'b', 'd', 'e');
 =cut
 
 sub flattenEx {
@@ -1252,7 +1255,7 @@ sub insert {
 		splice( @{$self}, $index, 0, @_ );
 	}
 	else {
-		splice( @{$self}, $index, 0, @_ );
+		splice( @{$self}, $index < 0 ? $index + 1 : $index, 0, @_ );
 	}
 
 	return $self;
@@ -1305,6 +1308,7 @@ sub join {
   
   ra(1, 2, 3)->keep_if(sub {$_[0] > 2}) #return ra(3);
 =cut
+
 sub keep_if {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1348,6 +1352,7 @@ sub last {
   ra(1, 2, 3)->length() #return 3;
   ra()->length() #return 0;
 =cut
+
 sub length {
 	my ($self) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -1401,7 +1406,7 @@ sub mapEx {
   If a block is given, 
   
   ra(1, 2, 3)->max() #return 3;
-  ra(1, 2, 3)->max(sub {$_[0] <=> $_[1]}) #return 3;
+  ra(1, 2, 3)->max(sub {$_[1] <=> $_[0]}) #return 1;
 =cut
 
 sub max {
@@ -1434,7 +1439,7 @@ sub max_by {
   If a block is given, 
   
   ra(1, 2, 3)->min() #return 1;
-  ra(1, 2, 3)->min(sub {$_[0] <=> $_[1]}) #return 1;
+  ra(1, 2, 3)->min(sub {$_[1] <=> $_[0]}) #return 3;
 =cut
 
 sub min {
@@ -1618,6 +1623,9 @@ sub permutation {
 			return $new_ary;
 		}
 	}
+	if($n == undef) {
+		$n = $self->size();
+	}
 	if ( $n == 0 ) {
 		if ( defined $block ) {
 			$block->( tie my @empty_ary, 'Ruby::Collections::Array' );
@@ -1751,7 +1759,9 @@ sub double_left_arrows {
 }
 
 =item rassoc()
+  Returns the first array which contains the target object as the last element.
   
+  ra(ra(1, 3), 3, ra(2, 3))->rassoc(3) #returns ra(1, 3);
 =cut
 
 sub rassoc {
@@ -1865,9 +1875,6 @@ sub repeated_combination {
 	}
 }
 
-=item repeated_combination_loop()
-  
-=cut
 
 sub repeated_combination_loop {
 	caller eq __PACKAGE__ or die;
@@ -1965,9 +1972,6 @@ sub repeated_permutation {
 	}
 }
 
-=item repeated_permutation_loop()
-=cut
-
 sub repeated_permutation_loop {
 	caller eq __PACKAGE__ or die;
 
@@ -1983,9 +1987,6 @@ sub repeated_permutation_loop {
 	} until ( "@$loop_counter" eq "@end_status" );
 	$block->($loop_counter);
 }
-
-=item increase_repeated_permutation_loop_counter()
-=cut
 
 sub increase_repeated_permutation_loop_counter {
 	caller eq __PACKAGE__ or die;
@@ -2150,6 +2151,13 @@ sub rotateEx {
 	return $self;
 }
 
+=item sample()
+  Chooses a random element or n random elements from the array.
+  
+  ra(1, 2, 3, 4)->sample 
+  ra(1, 2, 3, 4)->sample(2)
+=cut
+
 sub sample {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2178,6 +2186,12 @@ sub sample {
 	}
 }
 
+=item select()
+ Returns a new array which contains all the elements for which the given block returns true.
+ 
+ ra(1, 4, 6, 7, 8)->select(sub {($_[0]%2) == 0 }) #return ra(4, 6, 8);
+=cut
+
 sub select {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2189,6 +2203,13 @@ sub select {
 }
 
 *find_all = \&select;
+
+=item selectEx()
+  Deleting all the elements from self for which the given block returns false, then returns self.
+  Alias : keep_if
+  
+  ra(1, 4, 6, 7, 8)->selectEx(sub {($_[0]%2) == 0 }) #return ra(4, 6, 8);
+=cut
 
 sub selectEx {
 	my ( $self, $block ) = @_;
@@ -2204,6 +2225,14 @@ sub selectEx {
 		return $self;
 	}
 }
+
+=item shift()
+  Removes the first element of self and returns it.
+  If a number n is given, then removes the first n element of self and returns them as an array.
+  
+  ra(1, 2, 3)->shift #returns 1;
+  ra(1, 2, 3, 4, 5)->shift(3) #returns ra(1, 2, 3);
+=cut
 
 sub shift {
 	my ( $self, $n ) = @_;
@@ -2223,6 +2252,12 @@ sub shift {
 	}
 }
 
+=item unshift()
+  Adding the objects to the front of self.
+  
+  ra(2, 4, 6)->unshift(1, 3, 5) #returns ra(1, 3, 5, 2, 4 ,6);
+=cut
+
 sub unshift {
 	my $self = shift @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2231,6 +2266,12 @@ sub unshift {
 
 	return $self;
 }
+
+=item shuffle()
+  Returns a new array with all elements of self shuffled.
+  
+  ra(1, 2, 3, 4, 5, 6)->shuffle 
+=cut
 
 sub shuffle {
 	my ($self) = @_;
@@ -2251,6 +2292,12 @@ sub shuffle {
 
 	return $new_ary;
 }
+
+=item shuffleEx()
+  Shuffles all elements in self in place.
+  
+  ra(1, 2, 3, 4, 5, 6)->shuffleEx  
+=cut
 
 sub shuffleEx {
 	my ($self) = @_;
@@ -2273,6 +2320,15 @@ sub shuffleEx {
 	return $self;
 }
 
+=item slice()
+  Returns the element at given index.
+  If the start and length(n) are given, then returns a new array contains the elements 
+  from the start index to following n-1 elements.
+  
+  ra(1, 2, 3)->slice(2) #returns 3;
+  ra(1, 2, 3, 4, 5)->slice(1, 2) #returns ra(2, 3);
+=cut
+
 sub slice {
 	my ( $self, $index, $length ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2289,6 +2345,14 @@ sub slice {
 		return $self->at($index);
 	}
 }
+
+=item sliceEx()
+  Deleting the element at given index from self, then return this element.
+  Or deleting the elements from given start index to following n-1 elements from self, then return these elements.
+  
+  ra(1, 2, 3)->slice(2) #returns 3;
+  ra(1, 2, 3, 4, 5)->slice(1, 2) #returns ra(2, 3);
+=cut
 
 sub sliceEx {
 	my ( $self, $index, $length ) = @_;
@@ -2312,6 +2376,13 @@ sub sliceEx {
 		return $self->delete_at($index);
 	}
 }
+
+=item slice_before()
+  Creates a new array for each chuncked elements, the method of chunks could by pattern or block.
+  
+  ra(1, 2, 3, 4, 5, 3)->slice_before(3) #returns ra(ra(1, 2), ra(3, 4, 5),ra(3));
+  ra(1, 2, 3, 4, 5, 3)->slice_before(sub {$_[0]%3 == 0}) #returns ra(ra(1, 2), ra(3, 4, 5),ra(3));
+=cut
 
 sub slice_before {
 	my $self = shift @_;
@@ -2362,6 +2433,13 @@ sub slice_before {
 	return $new_ary;
 }
 
+=item sort()
+  Returns a new array by sorting self.
+  
+  ra(1, 3, 5, 2, 7, 0)->sort #returns ra(0, 1, 2, 3, 5, 7);
+  ra('djh', 'kdirhf', 'a')->sort(sub {length($_[0]) <=> length($_[1])}) #returns ra('a', 'djh', 'kdirhf');
+=cut
+
 sub sort {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2386,6 +2464,13 @@ sub sort {
 	return $new_ary;
 }
 
+=item sortEx()
+  Sorts self in place.
+  
+  ra(1, 3, 5, 2, 7, 0)->sortEx #returns ra(0, 1, 2, 3, 5, 7);
+  ra('djh', 'kdirhf', 'a')->sortEx(sub {length($_[0]) <=> length($_[1])}) #returns ra('a', 'djh', 'kdirhf');
+=cut
+
 sub sortEx {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2409,6 +2494,12 @@ sub sortEx {
 	return $self;
 }
 
+=item sort_by()
+  Returns a new array by sorting self with block method.
+  
+  ra(2, 3, 7, 89, 6)->sort_by(sub {$_[0]-2}) #returns ra(2, 3, 6, 7, 89);
+=cut
+
 sub sort_by {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2431,6 +2522,12 @@ sub sort_by {
 
 	return $trans_ary;
 }
+
+=item sort_byEx()
+  Sorting self with block method, and return self.
+  
+  ra(2, 3, 7, 89, 6)->sort_byEx(sub {$_[0]-2}) #returns ra(2, 3, 6, 7, 89);
+=cut
 
 sub sort_byEx {
 	my ( $self, $block ) = @_;
@@ -2456,6 +2553,12 @@ sub sort_byEx {
 	return $self;
 }
 
+=item take()
+  Takes the first n elements from the array.
+  
+  ra(3, 5, 6, 7, 8, 9)->take(2) #returns ra(3, 5);
+=cut
+
 sub take {
 	my ( $self, $n ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2474,6 +2577,12 @@ sub take {
 	}
 }
 
+=item take_while()
+  Passes all elements to the block until the block is false, then returns the previous elements.
+  
+  ra(2, 4, 3 ,6 ,7 , 8, 2)->take_while(sub {$_[0] < 5}) #returns ra(2, 4, 3);
+=cut
+
 sub take_while {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
@@ -2491,12 +2600,28 @@ sub take_while {
 	return $new_ary;
 }
 
+=item to_a()
+  Returns self.
+  
+  ra(2, 4, 6, 7, 8, 9)->to_a #returns ra(2, 4, 6, 7, 8, 9);
+=cut
+
 sub to_a {
 	my ( $self, $block ) = @_;
 	ref($self) eq __PACKAGE__ or die;
 
 	return $self;
 }
+
+sub transpose {
+	
+}
+
+=item entries()
+  Returns an array containing all elements.
+  
+  rh(2=>4, 4=>5, 6=>7)->entries #returns ra(ra(2, 4),ra(4, 5) ,ra(6, 7));
+=cut
 
 sub entries {
 	my ( $self, $block ) = @_;
@@ -2507,6 +2632,16 @@ sub entries {
 
 	return @new_ary;
 }
+
+=item zip()
+  Converts all arguments into array, and merges each arrays with self by corresponding index.
+  
+  my $a = ra(1, 2, 3);
+  my $b = ra(4, 5, 6);
+  my $c = ra(7, 8);
+  $a->zip($b) #returns ra(ra(1, 4), ra(2, 5), ra(3, 6));
+  $a->zip($c) #returns ra(ra(1, 7), ra(2, 8), ra(3, undef));
+=cut
 
 sub zip {
 	my ($self) = @_;
@@ -2535,6 +2670,12 @@ sub zip {
 		return $new_ary;
 	}
 }
+
+=item union()
+  Returns a new array by joining with given array, and removing the duplicate elements.
+  
+  ra(1, 3, 4)->union(ra(2, 4, 6)) #returns ra(1, 3, 4, 2, 6);
+=cut
 
 sub union {
 	my ( $self, $other ) = @_;
