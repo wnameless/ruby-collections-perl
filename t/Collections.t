@@ -14,11 +14,19 @@ is( ref( ra() ), 'Ruby::Collections::Array', 'Testing ra() raw type' );
 
 is( reftype( ra() ), 'ARRAY', 'Testing ra() basic type' );
 
-is_deeply( ra( 1, 2, 3 ), [ 1, 2, 3 ], 'Testing ra() with arguments' );
+is( ra( 1, 2, 3 )->to_s, p_obj( [ 1, 2, 3 ] ), 'Testing ra() with arguments' );
 
-is_deeply( ra( [ 1, 2, 3 ] ), [ 1, 2, 3 ], 'Testing ra() with array ref' );
+is(
+	ra( [ 1, 2, 3 ] )->to_s,
+	p_obj( [ 1, 2, 3 ] ),
+	'Testing ra() with array ref'
+);
 
-is_deeply( ra( ra( 1, 2, 3 ) ), [ [ 1, 2, 3 ] ], 'Testing ra() with ra()' );
+is(
+	ra( ra( 1, 2, 3 ) )->to_s,
+	p_obj( [ [ 1, 2, 3 ] ] ),
+	'Testing ra() with ra()'
+);
 
 is( ref( rh() ), 'Ruby::Collections::Hash', 'Testing rh() raw type' );
 
